@@ -1,409 +1,420 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="ALaiShA">
-    <title>SPanel - OFFICIAL DOWNLOAD | BLOCKMAN GO ADMIN PANEL</title>
+    <title>SPanel v4.5 - ADMIN PANEL</title>
+    
+    <!-- FONTES E ÍCONES (Não mexer aqui) -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
+        /* ============================================================
+           CONFIGURAÇÃO DE CORES (MODIFIQUE AQUI OS TEMAS)
+           ============================================================ */
         :root {
-            --primary: #ff003c;
-            --primary-dim: rgba(255, 0, 60, 0.15);
-            --secondary: #00f3ff;
+            --primary: #ff003c; /* Cor principal (Vermelho) */
+            --primary-glow: rgba(255, 0, 60, 0.5);
             --bg-dark: #020202;
+            --panel-bg: rgba(6, 6, 6, 0.95);
             --text-main: #e0e0e0;
-            --grid-color: rgba(255, 0, 60, 0.08);
-            --glow: 0 0 10px var(--primary);
+            --text-dim: #666;
+            --border: rgba(255, 0, 60, 0.3);
+            --pride-gradient: linear-gradient(90deg, #ff0000, #ff8700, #ffd300, #deff0a, #a1ff0a, #0aff99, #0aefff, #147df5, #580aff, #be0aff);
         }
 
-        body.theme-home { --primary: #ff003c; --primary-dim: rgba(255, 0, 60, 0.15); }
-        body.theme-music { --primary: #00f3ff; --primary-dim: rgba(0, 243, 255, 0.15); }
-        body.theme-ai { --primary: #00ff6a; --primary-dim: rgba(0, 255, 106, 0.15); }
-
-        * {
-            box-sizing: border-box;
-            cursor: crosshair;
-            user-select: none;
-        }
-
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Rajdhani', sans-serif;
-            overflow: hidden;
-        }
-
-        /* --- BACKGROUND ANIMATIONS (HACKER LINES) --- */
-        .tech-grid {
-            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
-            background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 60px 60px;
-            transform: perspective(1000px) rotateX(60deg);
-            animation: gridScroll 15s linear infinite;
-            z-index: -4; opacity: 0.6;
-            mask-image: radial-gradient(circle, #000 0%, transparent 80%);
-        }
-        @keyframes gridScroll {
-            0% { transform: perspective(1000px) rotateX(60deg) translateY(0); }
-            100% { transform: perspective(1000px) rotateX(60deg) translateY(60px); }
-        }
-
-        /* Hacker Scanning Line */
-        .hacker-line {
-            position: fixed; top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-            opacity: 0.5; z-index: 9000; pointer-events: none;
-            animation: scanMove 4s linear infinite;
-        }
-        @keyframes scanMove {
-            0% { top: -5%; }
-            100% { top: 105%; }
-        }
-
-        /* Lateral Cyber Bits */
-        .data-stream {
-            position: fixed; top: 0; right: 20px; width: 40px; height: 100%;
-            font-family: 'Share Tech Mono'; font-size: 10px; color: var(--primary);
-            opacity: 0.2; overflow: hidden; pointer-events: none; z-index: -1;
-            display: flex; flex-direction: column; line-height: 1;
-        }
-
-        .glitch { animation: glitch-skew 1s infinite linear alternate-reverse; }
-        @keyframes glitch-skew {
-            0% { transform: skew(-1deg); }
-            50% { transform: skew(1deg); }
-            100% { transform: skew(0deg); }
-        }
-
-        #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; opacity: 0.15; }
-        .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%); background-size: 100% 4px; z-index: 9001; pointer-events: none; }
-
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 50px; background: rgba(0,0,0,0.85);
-            border-bottom: 1px solid var(--primary-dim);
-            position: relative; z-index: 1000;
-        }
-
-        .logo {
-            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.8rem;
-            letter-spacing: 4px; color: #fff; text-shadow: 2px 2px 0px var(--primary);
-        }
-
-        nav button {
-            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05);
-            color: #888; font-family: 'Share Tech Mono'; padding: 8px 20px;
-            margin-left: 10px; transition: 0.3s; text-transform: uppercase;
-        }
-        nav button:hover, nav button.active { color: var(--primary); border-color: var(--primary); background: var(--primary-dim); }
-
-        .hacker-panel {
-            position: relative; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.08);
-            transition: 0.3s;
-        }
-        .hacker-panel::before, .hacker-panel::after {
-            content: ''; position: absolute; width: 12px; height: 12px; border-color: var(--primary); border-style: solid;
-        }
-        .hacker-panel::before { top: -2px; left: -2px; border-width: 2px 0 0 2px; }
-        .hacker-panel::after { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
-
-        .view-content { display: none; height: calc(100vh - 100px); padding: 50px; }
-        .view-content.active { display: block; animation: viewSlide 0.5s ease; }
-        @keyframes viewSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .hero { display: flex; flex-direction: column; justify-content: center; height: 60vh; }
-        .hero h1 { font-family: 'Orbitron'; font-size: 5.5rem; margin: 0; line-height: 1; }
-        .hero h1 span { color: transparent; -webkit-text-stroke: 1px var(--primary); filter: drop-shadow(0 0 5px var(--primary)); }
-        .hero p { font-family: 'Share Tech Mono'; color: var(--primary); font-size: 1.1rem; margin-top: 15px; text-transform: uppercase; letter-spacing: 2px; }
-
-        .btn-main {
-            padding: 15px 35px; font-family: 'Share Tech Mono'; font-weight: bold;
-            background: var(--primary-dim); color: var(--primary); border: 1px solid var(--primary);
-            cursor: pointer; text-transform: uppercase; display: flex; align-items: center; gap: 10px;
-            transition: 0.3s ease;
-        }
-        .btn-main:hover { background: var(--primary); color: #fff; box-shadow: 0 0 20px var(--primary-dim); }
-
-        /* Loading Screen */
-        #loadingScreen {
-            display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10000; justify-content: center; align-items: center; flex-direction: column;
-            transition: opacity 0.5s;
-        }
-        .loading-text { font-family: 'Orbitron'; color: var(--primary); font-size: 2rem; letter-spacing: 8px; text-align: center; }
-        .loading-bar-wrap { width: 350px; height: 4px; background: #111; margin-top: 30px; position: relative; overflow: hidden; border: 1px solid #333; }
-        .loading-bar-fill { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 15px var(--primary); }
-
-        /* AI CHAT */
-        .ai-container { display: grid; grid-template-columns: 1fr 380px; gap: 20px; height: 100%; }
-        .chat-window { display: flex; flex-direction: column; background: rgba(0,0,0,0.85); border: 1px solid var(--primary-dim); overflow: hidden; }
-        .chat-header { padding: 12px 20px; background: var(--primary-dim); border-bottom: 1px solid var(--primary); display: flex; justify-content: space-between; font-family: 'Share Tech Mono'; color: var(--primary); }
-        .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; font-family: 'Share Tech Mono'; scrollbar-width: none; }
-        .msg { max-width: 85%; padding: 10px 15px; border-radius: 4px; line-height: 1.4; }
-        .msg.user { align-self: flex-end; background: #1a1a1a; border-right: 3px solid var(--primary); color: #fff; }
-        .msg.bot { align-self: flex-start; background: rgba(255,255,255,0.03); border-left: 3px solid var(--primary); color: var(--primary); }
+        /* Cores dos Temas (Basta trocar o código HEX como #00ff00) */
+        body.theme-green { --primary: #00ff41; --primary-glow: rgba(0, 255, 65, 0.5); --border: rgba(0, 255, 65, 0.3); }
+        body.theme-blue { --primary: #00d2ff; --primary-glow: rgba(0, 210, 255, 0.5); --border: rgba(0, 210, 255, 0.3); }
+        body.theme-purple { --primary: #bc00ff; --primary-glow: rgba(188, 0, 255, 0.5); --border: rgba(188, 0, 255, 0.3); }
+        body.theme-gold { --primary: #ffcc00; --primary-glow: rgba(255, 204, 0, 0.5); --border: rgba(255, 204, 0, 0.3); }
+        body.theme-pink { --primary: #ff00ff; --primary-glow: rgba(255, 0, 255, 0.5); --border: rgba(255, 0, 255, 0.3); }
+        body.theme-emerald { --primary: #50c878; --primary-glow: rgba(80, 200, 120, 0.5); --border: rgba(80, 200, 120, 0.3); }
+        body.theme-ice { --primary: #f0f8ff; --primary-glow: rgba(240, 248, 255, 0.5); --border: rgba(240, 248, 255, 0.3); }
         
-        .chip {
-            padding: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.3);
-            color: #777; font-family: 'Rajdhani'; font-weight: 600; cursor: pointer; transition: 0.3s;
-            margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+        body.theme-pride { --primary: #ffffff; --primary-glow: rgba(255, 255, 255, 0.3); --border: #ffffff; }
+        body.theme-pride .logo span, body.theme-pride .btn-core, body.theme-pride #clock, body.theme-pride .win-title, body.theme-pride .welcome-hero h1, body.theme-pride .welcome-hero p span {
+            background: var(--pride-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold;
         }
-        .chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-dim); transform: translateX(5px); }
 
+        /* EFEITOS VISUAIS (CRT/SCANLINES) */
+        body::before {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 10001; background-size: 100% 3px, 2px 100%; pointer-events: none;
+        }
+
+        .scanner-line {
+            position: fixed; top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--primary); box-shadow: 0 0 15px var(--primary);
+            z-index: 10002; opacity: 0.3; animation: scan 8s linear infinite; pointer-events: none;
+        }
+
+        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+
+        /* RESET GERAL */
+        * { box-sizing: border-box; cursor: crosshair; outline: none; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg-dark); color: var(--text-main); font-family: 'Rajdhani', sans-serif; overflow: hidden; user-select: none; transition: background 0.5s ease; }
+
+        #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; }
+
+        /* LOGO CENTRAL */
+        .welcome-hero { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 0; pointer-events: none; width: 100%; }
+        .welcome-hero h1 { font-family: 'Orbitron'; font-size: clamp(4rem, 15vw, 10rem); font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--primary); margin: 0; letter-spacing: 25px; opacity: 0.15; text-transform: uppercase; }
+        .welcome-hero p { font-family: 'Share Tech Mono'; color: var(--primary); letter-spacing: 8px; text-transform: uppercase; font-size: 0.8rem; margin-top: -10px; opacity: 0.4; }
+
+        /* BARRA DE TAREFAS */
+        .taskbar { height: 60px; background: #000; border-bottom: 2px solid var(--primary); display: flex; align-items: center; padding: 0 25px; position: relative; z-index: 10000; }
+        .logo { font-family: 'Orbitron'; font-weight: 900; font-size: 1.4rem; letter-spacing: 4px; color: #fff; text-shadow: 0 0 10px var(--primary); }
+        .logo span { color: var(--primary); }
+
+        .nav-icons { display: flex; gap: 10px; margin-left: auto; }
+        .icon-btn { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 8px 15px; display: flex; align-items: center; gap: 8px; font-family: 'Orbitron'; font-size: 0.6rem; transition: 0.3s; cursor: pointer; clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%); }
+        .icon-btn:hover, .icon-btn.active { color: #fff; border-color: var(--primary); background: rgba(255, 0, 60, 0.15); box-shadow: 0 0 15px var(--primary-glow); }
+
+        /* JANELAS */
+        .window { position: absolute; background: var(--panel-bg); border: 1px solid var(--primary); display: none; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.8); backdrop-filter: blur(10px); clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); min-width: 300px; }
+        .window.active { display: flex; }
+        .win-header { height: 35px; background: rgba(255, 0, 60, 0.15); border-bottom: 1px solid var(--primary); display: flex; justify-content: space-between; align-items: center; padding: 0 15px; cursor: grab; }
+        .win-title { font-family: 'Orbitron'; font-size: 0.65rem; color: #fff; font-weight: bold; letter-spacing: 1px; }
+        .win-btn { color: var(--text-dim); cursor: pointer; transition: 0.2s; display: flex; align-items: center; }
+        .win-btn:hover { color: var(--primary); transform: scale(1.1); }
+        .win-body { flex: 1; padding: 15px; overflow-y: auto; position: relative; }
+
+        /* GRADES E BOTÕES */
+        .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .theme-swatch { height: 45px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-family: 'Orbitron'; transition: 0.2s; text-align: center; }
+        .theme-swatch:hover { border-color: #fff; transform: translateY(-2px); }
+
+        .btn-core { background: #000; border: 1px solid var(--primary); color: var(--primary); font-family: 'Orbitron'; font-size: 0.65rem; padding: 10px; font-weight: bold; transition: 0.3s; width: 100%; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; clip-path: polygon(5% 0, 100% 0, 100% 70%, 95% 100%, 0 100%, 0 30%); margin-bottom: 8px; }
+        .btn-core:hover { background: var(--primary); color: #fff; box-shadow: 0 0 15px var(--primary); }
+
+        /* LISTA DE MÚSICA */
+        .song-item { padding: 10px; background: rgba(255,255,255,0.03); margin-bottom: 5px; border-left: 3px solid transparent; cursor: pointer; font-size: 0.8rem; }
+        .song-item:hover, .song-item.active { background: rgba(255,0,60,0.1); border-left-color: var(--primary); }
+
+        #clock { min-width: 60px; text-align: center; font-family: 'Share Tech Mono'; color: var(--primary); font-size: 1rem; margin-left: 15px; }
+
+        footer { position: fixed; bottom: 0; width: 100%; height: 25px; background: #000; border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 15px; font-size: 0.55rem; color: var(--primary); font-family: 'Share Tech Mono'; z-index: 10005; }
     </style>
 </head>
-<body class="theme-home">
+<body onload="init()">
 
-    <div class="scanlines"></div>
-    <div class="hacker-line"></div>
-    <div class="tech-grid"></div>
-    <div class="data-stream" id="dataStream"></div>
+    <div class="scanner-line"></div>
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- LOADING SEQUENCE -->
-    <div id="loadingScreen">
-        <div class="loading-text glitch" id="loadText">SYSTEM_BOOT</div>
-        <div class="loading-bar-wrap"><div class="loading-bar-fill" id="loadBar"></div></div>
-        <div style="margin-top:20px; color:var(--primary); font-family:'Share Tech Mono'; font-size:0.8rem;" id="loadLog">FETCHING SYSTEM ASSETS...</div>
+    <!-- TEXTOS DO MEIO DA TELA -->
+    <div class="welcome-hero">
+        <h1>SPANEL</h1>
+        <p>Desenvolvido por <span>ALaiShA</span> & <span>skibidi</span></p>
     </div>
 
-    <!-- MODAL GUI (ENGLISH) -->
-    <div id="downloadGui" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 420px; background: #0a0a0a; border: 1px solid var(--primary); z-index: 11000; padding: 35px; box-shadow: 0 0 100px rgba(0,0,0,1); text-align: center; font-family: 'Share Tech Mono';" class="hacker-panel">
-        <i data-lucide="shield-alert" size="50" style="color:var(--primary); margin-bottom:15px;"></i>
-        <h2 class="glitch">ACCESS_DENIED</h2>
-        <p style="color: #ccc; margin: 15px 0;">Wait for the official SPanel release. The core is being stabilized by ALaiShA.</p>
-        <div style="padding: 10px; background: rgba(255,255,255,0.03); border: 1px dashed #333; margin-bottom: 20px;">
-            <p style="font-size: 0.8rem; color: #777;">SUPPORT NODES:<br><span style="color:var(--primary)">ALaiShA | skibidi</span></p>
+    <!-- MENSAGEM DE ERRO/OFFLINE -->
+    <div id="statusModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:20000; display:none; align-items:center; justify-content:center;">
+        <div style="width:400px; padding:30px; border:1px solid var(--primary); background:#050505; text-align:center;">
+            <i data-lucide="alert-circle" color="var(--primary)" size="40"></i>
+            <h2 style="font-family:'Orbitron'; color:#fff; margin:15px 0;">S-PANEL OFFLINE</h2>
+            <p style="font-family:'Share Tech Mono'; color:#aaa; font-size:0.8rem; margin-bottom:20px;">Download disponível em breve no Discord.</p>
+            <button class="btn-core" onclick="document.getElementById('statusModal').style.display='none'">ENTENDIDO</button>
         </div>
-        <button class="btn-main" style="width: 100%; justify-content: center;" onclick="closeGui()">CONFIRM_ID</button>
     </div>
 
-    <header>
-        <div class="logo">S<span style="color:var(--primary)">PANEL</span></div>
-        <nav>
-            <button onclick="switchTab('home')" id="btn-home" class="active">HOME</button>
-            <button onclick="switchTab('music')" id="btn-music">PLAYLIST</button>
-            <button onclick="switchTab('ai')" id="btn-ai">KHD_IA</button>
-        </nav>
-    </header>
+    <!-- BARRA DE TAREFAS -->
+    <div class="taskbar">
+        <div class="logo">S<span>PANEL</span></div>
+        <div class="nav-icons">
+            <div class="icon-btn" onclick="toggleWin('win-browser', this)"><i data-lucide="globe" size="14"></i> NAVEGADOR</div>
+            <div class="icon-btn" onclick="toggleWin('win-music', this)"><i data-lucide="music" size="14"></i> PLAYLIST</div>
+            <div class="icon-btn" onclick="toggleWin('win-ai', this)"><i data-lucide="brain" size="14"></i> IA</div>
+            <div class="icon-btn" onclick="toggleWin('win-themes', this)"><i data-lucide="palette" size="14"></i> TEMAS</div>
+            <div class="icon-btn" onclick="toggleWin('win-dl', this)"><i data-lucide="download" size="14"></i> DOWNLOAD</div>
+        </div>
+        <div id="clock">00:00</div>
+    </div>
 
-    <!-- VIEW HOME -->
-    <div id="view-home" class="view-content active">
-        <div class="hero">
-            <h1 class="glitch">S-PANEL<br><span>PROJECT</span></h1>
-            <p>> LEVEL_04_AUTH // ADMIN_PANEL_HUB // <span style="animation: blink 1s infinite;">_</span></p>
-            <div style="margin-top: 40px; display: flex; gap: 20px;">
-                <button class="btn-main hacker-panel" onclick="startDownloadFlow()">
-                    <i data-lucide="download"></i> INITIALIZE DOWNLOAD
-                </button>
-                <button class="btn-main hacker-panel" style="background: rgba(88, 101, 242, 0.1); border-color: #5865f2; color: #5865f2;" onclick="window.open('https://discord.gg/k8STRGXu')">
-                    <i data-lucide="message-square"></i> JOIN DISCORD
-                </button>
+    <div class="desktop">
+        
+        <!-- JANELA: TEMAS -->
+        <div id="win-themes" class="window" style="top:100px; left:100px; width:350px;">
+            <div class="win-header">
+                <div class="win-title">INTERFACE // TEMAS</div>
+                <div class="win-btn" onclick="toggleWin('win-themes')"><i data-lucide="x" size="16"></i></div>
             </div>
-        </div>
-    </div>
-
-    <!-- VIEW MUSIC -->
-    <div id="view-music" class="view-content">
-        <div style="display: grid; grid-template-columns: 1fr 380px; gap: 20px; height: 100%;">
-            <div class="hacker-panel" style="background: #000; overflow: hidden; border: 1px solid var(--primary);">
-                <iframe id="ytFrame" src="https://www.youtube.com/embed/tHzkYMvRqzo?enablejsapi=1" style="width:100%; height:100%; border:none;"></iframe>
-            </div>
-            <div id="trackList" style="overflow-y: auto; display: flex; flex-direction: column; gap: 5px;"></div>
-        </div>
-    </div>
-
-    <!-- VIEW AI -->
-    <div id="view-ai" class="view-content">
-        <div class="ai-container">
-            <div class="chat-window hacker-panel">
-                <div class="chat-header">
-                    <span><i data-lucide="binary" size="16"></i> KHD_CORE_v1.5</span>
-                    <span style="color: #00ff6a;">ONLINE</span>
-                </div>
-                <div class="chat-messages" id="chatMsgs">
-                    <div class="msg bot">KHD Terminal Initialized. Systems standing by for query...</div>
+            <div class="win-body">
+                <div class="theme-grid">
+                    <div class="theme-swatch" style="background:#ff003c" onclick="setTheme('')">PADRÃO</div>
+                    <div class="theme-swatch" style="background:#00ff41; color:#000" onclick="setTheme('theme-green')">MATRIX</div>
+                    <div class="theme-swatch" style="background:#00d2ff; color:#000" onclick="setTheme('theme-blue')">OCEAN</div>
+                    <div class="theme-swatch" style="background:#bc00ff" onclick="setTheme('theme-purple')">NEON</div>
+                    <div class="theme-swatch" style="background:#ff00ff" onclick="setTheme('theme-pink')">PINK</div>
+                    <div class="theme-swatch" style="background:#50c878; color:#000" onclick="setTheme('theme-emerald')">EMERALD</div>
+                    <div class="theme-swatch" style="background:#f0f8ff; color:#000" onclick="setTheme('theme-ice')">ICE</div>
+                    <div class="theme-swatch" style="background:#ffcc00; color:#000" onclick="setTheme('theme-gold')">OURO</div>
+                    <div class="theme-swatch" style="background:var(--pride-gradient); border:none;" onclick="setTheme('theme-pride')">PRIDE</div>
                 </div>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 5px;">
-                <div style="color:var(--primary); font-family:'Orbitron'; font-size:0.8rem; margin-bottom:15px; border-left: 3px solid var(--primary); padding-left: 10px;">QUERY_RESOURCES</div>
-                <div class="chip hacker-panel" onclick="askAI('Who created this site?')"><i data-lucide="terminal"></i> Who created this site?</div>
-                <div class="chip hacker-panel" onclick="askAI('Who created SPanel?')"><i data-lucide="user"></i> Who created SPanel?</div>
-                <div class="chip hacker-panel" onclick="askAI('What is Admin Panel?')"><i data-lucide="help-circle"></i> What is Admin Panel?</div>
-                <div class="chip hacker-panel" onclick="askAI('How to join Discord?')"><i data-lucide="share-2"></i> How to join Discord?</div>
-                <div class="chip hacker-panel" onclick="askAI('SPanel Release Date?')"><i data-lucide="calendar"></i> SPanel Release Date?</div>
+        </div>
+
+        <!-- JANELA: MÚSICA -->
+        <div id="win-music" class="window" style="top:150px; left:200px; width:650px; height:450px;">
+            <div class="win-header">
+                <div class="win-title">MEDIA PLAYER // 2025 MIX</div>
+                <div class="win-btn" onclick="toggleWin('win-music')"><i data-lucide="x" size="16"></i></div>
+            </div>
+            <div class="win-body" style="display:grid; grid-template-columns: 1fr 220px; gap:15px; height: calc(100% - 35px);">
+                <div style="background:#000; display:flex; flex-direction:column; border:1px solid var(--border);">
+                    <iframe id="ytPlayer" style="width:100%; flex:1; border:none;" src=""></iframe>
+                    <div id="songTitle" style="padding:10px; color:var(--primary); font-size:0.75rem; font-family:'Orbitron'; background: rgba(0,0,0,0.8);">PRONTO...</div>
+                </div>
+                <div id="songList" style="overflow-y:auto; background: rgba(0,0,0,0.3); padding: 5px;"></div>
             </div>
         </div>
+
+        <!-- JANELA: NAVEGADOR (GOOGLE INTEGRADO) -->
+        <div id="win-browser" class="window" style="top:100px; left:150px; width:800px; height:550px;">
+            <div class="win-header">
+                <div class="win-title">S-NET // GOOGLE INTEGRATED</div>
+                <div class="win-btn" onclick="toggleWin('win-browser')"><i data-lucide="x" size="16"></i></div>
+            </div>
+            <div class="win-body" style="padding:0; display:flex; flex-direction:column;">
+                <div style="display:flex; gap:10px; padding:10px; background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--border);">
+                    <input type="text" id="webIn" style="flex:1; background:rgba(0,0,0,0.5); border:1px solid var(--border); color:#fff; padding:8px; font-family:'Share Tech Mono';" placeholder="O que deseja buscar no Google?">
+                    <button class="btn-core" style="width:80px; margin:0;" onclick="loadGoogle()">BUSCAR</button>
+                </div>
+                <div id="browserContainer" style="flex:1; background: #fff;">
+                    <!-- Usando o DuckDuckGo Search ou Bing como base porque o Google bloqueia IFrames. Isso garante que abra dentro do site. -->
+                    <iframe id="googleIframe" src="https://www.bing.com" style="width:100%; height:100%; border:none;"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- JANELA: IA -->
+        <div id="win-ai" class="window" style="top:80px; right:50px; width:400px; height:500px;">
+            <div class="win-header">
+                <div class="win-title">NEURAL CORE // SKIBIDI AI</div>
+                <div class="win-btn" onclick="toggleWin('win-ai')"><i data-lucide="x" size="16"></i></div>
+            </div>
+            <div class="win-body" style="display:flex; flex-direction:column;">
+                <div id="aiChat" style="flex:1; background:rgba(0,0,0,0.3); border:1px solid var(--border); padding:10px; font-family:'Share Tech Mono'; font-size:0.75rem; overflow-y:auto;">
+                    <div style="color:var(--primary)">[SISTEMA]: Skibidi Neural Core v1.0 ONLINE.</div>
+                </div>
+                <div id="aiButtons" style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- JANELA: DOWNLOAD -->
+        <div id="win-dl" class="window" style="bottom:100px; left:50%; transform:translateX(-50%); width:350px;">
+            <div class="win-header">
+                <div class="win-title">SYSTEM UPDATE // DL</div>
+                <div class="win-btn" onclick="toggleWin('win-dl')"><i data-lucide="x" size="16"></i></div>
+            </div>
+            <div class="win-body" style="text-align:center;">
+                <div id="dlStatus" style="font-family:'Orbitron'; font-size:0.7rem; margin-bottom:10px;">AGUARDANDO...</div>
+                <div style="height:3px; background:#111; margin-bottom:15px;">
+                    <div id="dlBar" style="height:100%; width:0%; background:var(--primary); transition: width 0.1s;"></div>
+                </div>
+                <button class="btn-core" onclick="startDL()">INICIAR DOWNLOAD</button>
+            </div>
+        </div>
+
     </div>
 
+    <footer>
+        <i data-lucide="shield" size="10" style="margin-right:8px"></i>
+        <span>SPanel v4.5 Stable // Modificado para fácil edição</span>
+    </footer>
+
+    <!-- ============================================================
+         LÓGICA DO SITE (PARA MODIFICAR MÚSICAS E IA)
+         ============================================================ -->
     <script>
-        lucide.createIcons();
+        /* ------------------------------------------------------------
+           PLAYLIST DE MÚSICAS (ADICIONE NOVAS AQUI)
+           Instruções: 'id' é o código que fica no final do link do YouTube
+           Exemplo: youtube.com/watch?v=CODIGO
+           ------------------------------------------------------------ */
+const musicList = [
+  // MATUÊ (30PRAUM / oficiais) — itens problemáticos removidos
+{ id: "3YE2JNOA5kA", t: "Matuê - Armamento Russo" },
+  { id: "Z3_jY015bsE", t: "Matuê - XTRANHO" },
+  
+  // PHONK / BRAZILIAN PHONK
+  { id: "mmPSultmVtg", t: "Best Phonk 2025" },
+  { id: "u0VfXavVrjc", t: "Rio Phonk Viral" },
+  { id: "VYUHabpY7ks", t: "Funk Viral 2025" }
+  
+];
 
-        const playlist = [
-            { id: "tHzkYMvRqzo", title: "SEMPERO (Super Slowed)", artist: "QMIIR" },
-            { id: "IUq7xu6HtrI", title: "STRUCT (Slowed)", artist: "UdieNnx" },
-            { id: "r4X9W2P7Z0o", title: "Insomnia (Slowed)", artist: "Modlix" },
-            { id: "2CIc50DauYA", title: "Diamondz n Roses", artist: "VaporGod" },
-            { id: "vD6w4v7Gv3M", title: "MEMORIZING (Extended)", artist: "SUKA." }
+// Função para gerar o link completo do YouTube
+function getYouTubeLink(id) {
+  return `https://www.youtube.com/watch?v=${id}`;
+}
+
+// Testando a lista
+musicList.forEach(music => {
+  console.log(music.t, ":", getYouTubeLink(music.id));
+});
+
+        /* ------------------------------------------------------------
+           PERGUNTAS DA IA (ADICIONE NOVAS AQUI)
+           ------------------------------------------------------------ */
+        const aiDatabase = [
+            { q: "Quem criou?", r: "Interface por ALaiShA e Código por skibidi." },
+            { q: "Segurança?", r: "Proteção S-Net v4.5 ativa e criptografada." },
+            { q: "Versão?", r: "Você está usando a build 4.5.2 de 2025." },
+            { q: "Novidades?", r: "Novos temas e Google integrado agora disponíveis." }
         ];
 
-        // English Responses
-        const aiResponses = {
-            "Who created this site?": "Analysis complete: This portal was fully coded by **ALaiShA** for the SPanel community.",
-            "Who created SPanel?": "Database search: **SPanel** is a project led by **ALaiShA** with development assistance from **skibidi**.",
-            "What is Admin Panel?": "Definition: An advanced administration interface used to inject parameters and modify in-game behaviors in Blockman Go.",
-            "How to join Discord?": "Protocol: Click the 'JOIN DISCORD' button on the Home view or contact the admins directly for an invite.",
-            "SPanel Release Date?": "Status: Compilation at 95%. Official release is imminent. Monitor the Discord channel for the final ping."
-        };
+        /* ------------------------------------------------------------
+           FUNÇÕES DO SISTEMA (MEXER SÓ SE SOUBER)
+           ------------------------------------------------------------ */
+        let zIdx = 1000;
+        let matrixInterval;
 
-        window.onload = () => {
-            generateDataStream();
-            runLoading("CORE_BOOT_V4.5", "SUCCESS_ID_AUTHORIZED", () => {
-                hideLoading();
-            });
+        function init() {
+            lucide.createIcons();
             initMatrix();
-            renderPlaylist();
-        };
-
-        function generateDataStream() {
-            const stream = document.getElementById('dataStream');
-            setInterval(() => {
-                const bit = document.createElement('div');
-                bit.innerText = Math.random() > 0.5 ? '1' : '0';
-                bit.style.opacity = Math.random() * 0.5;
-                stream.prepend(bit);
-                if(stream.children.length > 40) stream.lastChild.remove();
-            }, 150);
-        }
-
-        function runLoading(title, endMsg, callback) {
-            const screen = document.getElementById('loadingScreen');
-            const bar = document.getElementById('loadBar');
-            const text = document.getElementById('loadText');
-            const log = document.getElementById('loadLog');
-            
-            screen.style.display = 'flex';
-            screen.style.opacity = '1';
-            text.innerText = title;
-            let p = 0;
-            const msgs = ["BYPASSING...", "DECRYPTING...", "PARSING...", "STABILIZING...", "AUTH_OK"];
-            
-            const int = setInterval(() => {
-                p += Math.random() * 4;
-                if (p > 100) p = 100;
-
-                bar.style.width = p + "%";
-                if(Math.floor(p) % 20 === 0) log.innerText = msgs[Math.floor(p/21)] || "FINALIZING...";
-                
-                if(p >= 100) {
-                    clearInterval(int);
-                    log.innerText = endMsg;
-                    setTimeout(callback, 800);
-                }
-            }, 45);
-        }
-
-        function hideLoading() {
-            const screen = document.getElementById('loadingScreen');
-            screen.style.opacity = '0';
-            setTimeout(() => screen.style.display = 'none', 500);
-        }
-
-        function switchTab(tab) {
-            runLoading(`${tab.toUpperCase()}_LINK...`, "READY", () => {
-                hideLoading();
-                executeTabSwitch(tab);
+            loadMusic();
+            loadAI();
+            startClock();
+            document.querySelectorAll('.window').forEach(win => {
+                win.addEventListener('mousedown', () => focusWin(win));
+                makeDraggable(win);
             });
         }
 
-        function executeTabSwitch(tab) {
-            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            document.getElementById('view-' + tab).classList.add('active');
-            document.getElementById('btn-' + tab).classList.add('active');
-            document.body.className = 'theme-' + tab;
+        // Relógio
+        function startClock() {
+            const clockEl = document.getElementById('clock');
+            const update = () => {
+                const d = new Date();
+                clockEl.innerText = d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+            };
+            update(); setInterval(update, 10000);
         }
 
-        function askAI(question) {
-            const chat = document.getElementById('chatMsgs');
-            const userMsg = document.createElement('div');
-            userMsg.className = 'msg user';
-            userMsg.innerText = question;
-            chat.appendChild(userMsg);
-            chat.scrollTop = chat.scrollHeight;
-
-            setTimeout(() => {
-                const botMsg = document.createElement('div');
-                botMsg.className = 'msg bot';
-                botMsg.innerHTML = `<i>Querying Database...</i>`;
-                chat.appendChild(botMsg);
-                chat.scrollTop = chat.scrollHeight;
-
-                setTimeout(() => {
-                    botMsg.innerHTML = aiResponses[question] || "ERROR: Unknown Query Segment.";
-                    chat.scrollTop = chat.scrollHeight;
-                }, 1000);
-            }, 400);
+        // Troca de Tema
+        function setTheme(cls) {
+            document.body.className = cls;
+            setTimeout(() => { initMatrix(); lucide.createIcons(); }, 100);
         }
 
-        function startDownloadFlow() {
-            runLoading("CHECKING_AUTH_TOKEN", "REJECTED_BY_SERVER", () => {
-                hideLoading();
-                document.getElementById('downloadGui').style.display = 'block';
-            });
-        }
-
-        function closeGui() { document.getElementById('downloadGui').style.display = 'none'; }
-
-        function renderPlaylist() {
-            const list = document.getElementById('trackList');
-            playlist.forEach(t => {
-                const item = document.createElement('div');
-                item.className = 'hacker-panel';
-                item.style.padding = "10px";
-                item.style.marginBottom = "5px";
-                item.style.display = "flex";
-                item.style.gap = "15px";
-                item.style.alignItems = "center";
-                item.style.cursor = "pointer";
-                item.innerHTML = `
-                    <img src="https://img.youtube.com/vi/${t.id}/default.jpg" style="width: 50px; border: 1px solid var(--primary);">
-                    <div>
-                        <div style="font-weight:bold; font-size:0.9rem;">${t.title}</div>
-                        <div style="font-size:0.7rem; color:var(--primary);">${t.artist}</div>
-                    </div>
-                `;
-                item.onclick = () => { 
-                    document.getElementById('ytFrame').src = `https://www.youtube.com/embed/${t.id}?autoplay=1`; 
-                };
-                list.appendChild(item);
-            });
-        }
-
+        // Fundo Matrix
         function initMatrix() {
-            const c = document.getElementById('matrixCanvas');
-            const ctx = c.getContext('2d');
-            c.width = window.innerWidth; c.height = window.innerHeight;
-            const chars = '01ｱｲｳｴｵ'.split('');
-            const fontSize = 16;
-            const columns = c.width/fontSize;
-            const drops = Array(Math.floor(columns)).fill(1);
+            if (matrixInterval) clearInterval(matrixInterval);
+            const canvas = document.getElementById('matrixCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const columns = Math.floor(canvas.width / 20);
+            const drops = Array(columns).fill(1);
+            const getPrimary = () => getComputedStyle(document.body).getPropertyValue('--primary').trim() || '#ff003c';
             function draw() {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, c.width, c.height);
-                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary');
-                ctx.font = fontSize + 'px monospace';
-                for(let i = 0; i < drops.length; i++) {
-                    const text = chars[Math.floor(Math.random()*chars.length)];
-                    ctx.fillText(text, i*fontSize, drops[i]*fontSize);
-                    if(drops[i]*fontSize > c.height && Math.random() > 0.975) drops[i] = 0;
-                    drops[i]++;
-                }
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = getPrimary(); ctx.font = '15px monospace';
+                drops.forEach((y, i) => {
+                    const text = String.fromCharCode(Math.random() * 128); ctx.fillText(text, i * 20, y * 20);
+                    if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0; drops[i]++;
+                });
             }
-            setInterval(draw, 50);
+            matrixInterval = setInterval(draw, 50);
         }
+
+        // Janelas
+        function toggleWin(id, btn) {
+            const win = document.getElementById(id);
+            const isVisible = win.style.display === 'flex';
+            win.style.display = isVisible ? 'none' : 'flex';
+            if (btn) btn.classList.toggle('active', !isVisible);
+            if (!isVisible) focusWin(win);
+        }
+
+        function focusWin(win) { zIdx++; win.style.zIndex = zIdx; }
+
+        function makeDraggable(win) {
+            const header = win.querySelector('.win-header');
+            header.onmousedown = (e) => {
+                if (e.target.closest('.win-btn')) return;
+                let ox = e.clientX - win.offsetLeft;
+                let oy = e.clientY - win.offsetTop;
+                const move = (me) => { win.style.left = (me.clientX - ox) + 'px'; win.style.top = (me.clientY - oy) + 'px'; };
+                const stop = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', stop); };
+                document.addEventListener('mousemove', move); document.addEventListener('mouseup', stop);
+            };
+        }
+
+        // Carregar Músicas
+        function loadMusic() {
+            const list = document.getElementById('songList');
+            musicList.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'song-item'; div.innerText = m.t;
+                div.onclick = () => {
+                    document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${m.id}?autoplay=1`;
+                    document.getElementById('songTitle').innerText = m.t;
+                    document.querySelectorAll('.song-item').forEach(i => i.classList.remove('active'));
+                    div.classList.add('active');
+                };
+                list.appendChild(div);
+            });
+        }
+
+        // Carregar IA
+        function loadAI() {
+            const area = document.getElementById('aiButtons');
+            aiDatabase.forEach(item => {
+                const b = document.createElement('button');
+                b.className = 'btn-core'; b.innerText = item.q;
+                b.onclick = () => {
+                    const chat = document.getElementById('aiChat');
+                    chat.innerHTML += `<div style="color:#fff; margin-top:8px;">> ${item.q}</div>`;
+                    setTimeout(() => {
+                        chat.innerHTML += `<div style="color:var(--primary); margin-left:10px;">[AI]: ${item.r}</div>`;
+                        chat.scrollTop = chat.scrollHeight;
+                    }, 300);
+                };
+                area.appendChild(b);
+            });
+        }
+
+        function loadGoogle() {
+            const query = document.getElementById('webIn').value;
+            const iframe = document.getElementById('googleIframe');
+            if (query) {
+                // Nota: Alguns sites bloqueiam iFrames (X-Frame-Options). 
+                // Usamos o DuckDuckGo ou Bing como alternativa se o Google bloquear o frame direto, 
+                // mas configurei para abrir a busca.
+                iframe.src = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+                // Usei o Bing porque ele permite iFrame mais facilmente que o Google padrão hoje em dia.
+            } else {
+                iframe.src = "https://www.bing.com";
+            }
+        }
+        
+        function startDL() {
+            let p = 0;
+            const bar = document.getElementById('dlBar');
+            const status = document.getElementById('dlStatus');
+            const timer = setInterval(() => {
+                p += Math.random() * 4;
+                if (p >= 100) {
+                    p = 100;
+                    clearInterval(timer);
+                    document.getElementById('statusModal').style.display = 'flex';
+                }
+                bar.style.width = p + '%';
+                status.innerText = `A DESCARREGAR: ${Math.floor(p)}%`;
+            }, 100);
+        }
+
+        window.onresize = () => {
+            const canvas = document.getElementById('matrixCanvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
     </script>
 </body>
 </html>
