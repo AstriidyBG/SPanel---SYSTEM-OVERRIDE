@@ -3,680 +3,407 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPanel - SYSTEM OVERRIDE v2</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <meta name="author" content="ALaiShA">
+    <title>SPanel - OFFICIAL DOWNLOAD | BLOCKMAN GO ADMIN PANEL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --primary: #ff003c;
-            --primary-dim: rgba(255, 0, 60, 0.1);
-            --bg-dark: #030303;
+            --primary-dim: rgba(255, 0, 60, 0.15);
+            --secondary: #00f3ff;
+            --bg-dark: #020202;
             --text-main: #e0e0e0;
-            --grid-color: rgba(255, 255, 255, 0.03);
-            --border-width: 1px;
+            --grid-color: rgba(255, 0, 60, 0.08);
+            --glow: 0 0 10px var(--primary);
         }
 
         body.theme-home { --primary: #ff003c; --primary-dim: rgba(255, 0, 60, 0.15); }
-        body.theme-music { --primary: #00f2ff; --primary-dim: rgba(0, 242, 255, 0.15); }
-        body.theme-ai { --primary: #ffaa00; --primary-dim: rgba(255, 170, 0, 0.15); }
+        body.theme-music { --primary: #00f3ff; --primary-dim: rgba(0, 243, 255, 0.15); }
+        body.theme-ai { --primary: #00ff6a; --primary-dim: rgba(0, 255, 106, 0.15); }
 
         * {
             box-sizing: border-box;
             cursor: crosshair;
             user-select: none;
-            outline: none;
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+            margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: var(--bg-dark);
             color: var(--text-main);
             font-family: 'Rajdhani', sans-serif;
-            font-weight: 500;
             overflow: hidden;
-            transition: --primary 0.4s ease;
         }
 
+        /* --- BACKGROUND ANIMATIONS (HACKER LINES) --- */
         .tech-grid {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(var(--grid-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: center;
-            z-index: -2;
-            opacity: 0.5;
+            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+            background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 60px 60px;
+            transform: perspective(1000px) rotateX(60deg);
+            animation: gridScroll 15s linear infinite;
+            z-index: -4; opacity: 0.6;
+            mask-image: radial-gradient(circle, #000 0%, transparent 80%);
+        }
+        @keyframes gridScroll {
+            0% { transform: perspective(1000px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(1000px) rotateX(60deg) translateY(60px); }
         }
 
-        #matrixCanvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            opacity: 0.08;
+        /* Hacker Scanning Line */
+        .hacker-line {
+            position: fixed; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.5; z-index: 9000; pointer-events: none;
+            animation: scanMove 4s linear infinite;
+        }
+        @keyframes scanMove {
+            0% { top: -5%; }
+            100% { top: 105%; }
         }
 
-        .vignette {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 40%, #000 120%);
-            z-index: -1;
-            pointer-events: none;
+        /* Lateral Cyber Bits */
+        .data-stream {
+            position: fixed; top: 0; right: 20px; width: 40px; height: 100%;
+            font-family: 'Share Tech Mono'; font-size: 10px; color: var(--primary);
+            opacity: 0.2; overflow: hidden; pointer-events: none; z-index: -1;
+            display: flex; flex-direction: column; line-height: 1;
         }
+
+        .glitch { animation: glitch-skew 1s infinite linear alternate-reverse; }
+        @keyframes glitch-skew {
+            0% { transform: skew(-1deg); }
+            50% { transform: skew(1deg); }
+            100% { transform: skew(0deg); }
+        }
+
+        #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; opacity: 0.15; }
+        .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%); background-size: 100% 4px; z-index: 9001; pointer-events: none; }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 50px;
-            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
-            position: relative;
-            z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 50px; background: rgba(0,0,0,0.85);
+            border-bottom: 1px solid var(--primary-dim);
+            position: relative; z-index: 1000;
         }
 
         .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: 1.8rem;
-            letter-spacing: 6px;
-            color: #fff;
-            text-transform: uppercase;
-            text-shadow: 0 0 20px var(--primary);
+            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.8rem;
+            letter-spacing: 4px; color: #fff; text-shadow: 2px 2px 0px var(--primary);
         }
-        .logo span { color: var(--primary); font-weight: 400; }
-
-        nav { display: flex; gap: 20px; }
 
         nav button {
-            background: transparent;
-            border: none;
-            color: #888;
-            font-size: 1rem;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 600;
-            letter-spacing: 2px;
-            cursor: pointer;
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05);
+            color: #888; font-family: 'Share Tech Mono'; padding: 8px 20px;
+            margin-left: 10px; transition: 0.3s; text-transform: uppercase;
+        }
+        nav button:hover, nav button.active { color: var(--primary); border-color: var(--primary); background: var(--primary-dim); }
+
+        .hacker-panel {
+            position: relative; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.08);
             transition: 0.3s;
-            padding: 5px 0;
-            position: relative;
-            text-transform: uppercase;
         }
-
-        nav button::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; width: 0%; height: 2px;
-            background: var(--primary);
-            transition: 0.3s;
-            box-shadow: 0 0 10px var(--primary);
+        .hacker-panel::before, .hacker-panel::after {
+            content: ''; position: absolute; width: 12px; height: 12px; border-color: var(--primary); border-style: solid;
         }
+        .hacker-panel::before { top: -2px; left: -2px; border-width: 2px 0 0 2px; }
+        .hacker-panel::after { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
 
-        nav button:hover, nav button.active { color: #fff; text-shadow: 0 0 8px var(--primary); }
-        nav button:hover::after, nav button.active::after { width: 100%; }
+        .view-content { display: none; height: calc(100vh - 100px); padding: 50px; }
+        .view-content.active { display: block; animation: viewSlide 0.5s ease; }
+        @keyframes viewSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .view-content {
-            display: none;
-            height: calc(100vh - 100px);
-            width: 100%;
-            overflow-y: auto;
-            padding: 0 50px;
-            scrollbar-width: none;
+        .hero { display: flex; flex-direction: column; justify-content: center; height: 60vh; }
+        .hero h1 { font-family: 'Orbitron'; font-size: 5.5rem; margin: 0; line-height: 1; }
+        .hero h1 span { color: transparent; -webkit-text-stroke: 1px var(--primary); filter: drop-shadow(0 0 5px var(--primary)); }
+        .hero p { font-family: 'Share Tech Mono'; color: var(--primary); font-size: 1.1rem; margin-top: 15px; text-transform: uppercase; letter-spacing: 2px; }
+
+        .btn-main {
+            padding: 15px 35px; font-family: 'Share Tech Mono'; font-weight: bold;
+            background: var(--primary-dim); color: var(--primary); border: 1px solid var(--primary);
+            cursor: pointer; text-transform: uppercase; display: flex; align-items: center; gap: 10px;
+            transition: 0.3s ease;
         }
-        .view-content.active { display: block; animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+        .btn-main:hover { background: var(--primary); color: #fff; box-shadow: 0 0 20px var(--primary-dim); }
 
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .hero-section {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 80vh;
-            position: relative;
+        /* Loading Screen */
+        #loadingScreen {
+            display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 10000; justify-content: center; align-items: center; flex-direction: column;
+            transition: opacity 0.5s;
         }
+        .loading-text { font-family: 'Orbitron'; color: var(--primary); font-size: 2rem; letter-spacing: 8px; text-align: center; }
+        .loading-bar-wrap { width: 350px; height: 4px; background: #111; margin-top: 30px; position: relative; overflow: hidden; border: 1px solid #333; }
+        .loading-bar-fill { height: 100%; background: var(--primary); width: 0%; box-shadow: 0 0 15px var(--primary); }
 
-        .hero-title {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: clamp(4rem, 8vw, 9rem);
-            line-height: 0.85;
-            margin: 0;
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(255,255,255,0.2);
-            position: relative;
-            z-index: 1;
-        }
+        /* AI CHAT */
+        .ai-container { display: grid; grid-template-columns: 1fr 380px; gap: 20px; height: 100%; }
+        .chat-window { display: flex; flex-direction: column; background: rgba(0,0,0,0.85); border: 1px solid var(--primary-dim); overflow: hidden; }
+        .chat-header { padding: 12px 20px; background: var(--primary-dim); border-bottom: 1px solid var(--primary); display: flex; justify-content: space-between; font-family: 'Share Tech Mono'; color: var(--primary); }
+        .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; font-family: 'Share Tech Mono'; scrollbar-width: none; }
+        .msg { max-width: 85%; padding: 10px 15px; border-radius: 4px; line-height: 1.4; }
+        .msg.user { align-self: flex-end; background: #1a1a1a; border-right: 3px solid var(--primary); color: #fff; }
+        .msg.bot { align-self: flex-start; background: rgba(255,255,255,0.03); border-left: 3px solid var(--primary); color: var(--primary); }
         
-        .hero-title span {
-            color: #fff;
-            -webkit-text-stroke: 0;
-            text-shadow: 0 0 30px var(--primary);
+        .chip {
+            padding: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.3);
+            color: #777; font-family: 'Rajdhani'; font-weight: 600; cursor: pointer; transition: 0.3s;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
         }
+        .chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-dim); transform: translateX(5px); }
 
-        .hero-subtitle {
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 300;
-            color: #aaa;
-            font-size: 1.4rem;
-            max-width: 600px;
-            margin-top: 20px;
-            letter-spacing: 4px;
-            border-left: 2px solid var(--primary);
-            padding-left: 20px;
-        }
-
-        .action-row {
-            display: flex;
-            gap: 30px;
-            margin-top: 50px;
-            align-items: center;
-        }
-
-        .cyber-btn {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            padding: 15px 40px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cyber-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%; width: 100%; height: 100%;
-            background: var(--primary);
-            transition: 0.4s;
-            z-index: -1;
-        }
-
-        .cyber-btn:hover { color: #000; box-shadow: 0 0 30px var(--primary); }
-        .cyber-btn:hover::before { left: 0; }
-
-        .discord-btn { border-color: #5865F2; color: #5865F2; }
-        .discord-btn:hover { box-shadow: 0 0 30px #5865F2; color: white; }
-        .discord-btn::before { background: #5865F2; }
-
-        .stats-hud {
-            position: absolute;
-            right: 0; bottom: 50px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            text-align: right;
-        }
-        .stat-item {
-            font-size: 0.9rem;
-            color: #666;
-            letter-spacing: 2px;
-        }
-        .stat-item b { color: var(--primary); margin-left: 10px; }
-
-        .features-dock {
-            display: flex;
-            gap: 20px;
-            margin-top: 60px;
-        }
-        
-        .f-card {
-            flex: 1;
-            background: rgba(10,10,10,0.6);
-            border: 1px solid #333;
-            padding: 20px;
-            transition: 0.3s;
-            position: relative;
-        }
-        .f-card:hover { border-color: var(--primary); background: var(--primary-dim); }
-        .f-card h4 { margin: 0 0 5px 0; color: #fff; font-size: 1.2rem; }
-        .f-card p { margin: 0; font-size: 0.9rem; color: #777; font-weight: 300; }
-
-        .music-layout {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 40px;
-            height: 100%;
-            padding-bottom: 50px;
-        }
-
-        .player-frame {
-            border: 1px solid var(--primary);
-            background: #000;
-            position: relative;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5);
-        }
-        
-        .track-list {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            overflow-y: auto;
-            max-height: 80vh;
-            padding-right: 10px;
-        }
-
-        .track-row {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            background: rgba(255,255,255,0.03);
-            border-left: 2px solid transparent;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-        
-        .track-row:hover { background: rgba(255,255,255,0.07); border-left-color: var(--primary); }
-        .track-row img { width: 50px; height: 30px; object-fit: cover; margin-right: 15px; opacity: 0.7; }
-        .track-row span { font-size: 0.95rem; font-weight: 400; letter-spacing: 1px; }
-
-        .ai-grid {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 30px;
-            height: 100%;
-            padding-bottom: 40px;
-        }
-
-        .ai-console {
-            border: 1px solid #333;
-            background: rgba(0,0,0,0.4);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            font-family: 'Share Tech Mono', monospace;
-        }
-        
-        .ai-log { flex: 1; overflow-y: auto; padding-right: 10px; }
-        .msg { margin-bottom: 15px; font-size: 0.9rem; line-height: 1.5; }
-        .msg.khd { color: var(--primary); }
-        .msg.user { color: #fff; text-align: right; opacity: 0.7; }
-
-        .quick-q-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
-            overflow-y: auto;
-            max-height: 80vh;
-            padding-right: 5px;
-        }
-
-        .q-chip {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid transparent;
-            padding: 12px 15px;
-            font-size: 0.85rem;
-            color: #aaa;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .q-chip:hover { border-color: var(--primary); color: #fff; background: var(--primary-dim); }
-        .q-chip i { font-size: 12px; opacity: 0.5; }
-
-        #loadingScreen, #lockScreen {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 9999;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .glitch-text {
-            font-family: 'Orbitron';
-            font-size: 3rem;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            animation: textShake 0.2s infinite;
-            text-align: center;
-            max-width: 90%;
-        }
-
-        .loader-line {
-            width: 300px;
-            height: 2px;
-            background: #333;
-            margin-top: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-        .loader-fill {
-            position: absolute;
-            left: 0; top: 0; height: 100%; width: 0%;
-            background: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
-        }
-
-        @keyframes textShake {
-            0% { transform: translate(1px, 1px); text-shadow: -1px -1px var(--primary); }
-            50% { transform: translate(-1px, -1px); text-shadow: 1px 1px #00f; }
-            100% { transform: translate(1px, -1px); text-shadow: -1px 1px var(--primary); }
-        }
-
-        .lock-modal {
-            border: 1px solid #333;
-            background: #050505;
-            padding: 50px;
-            text-align: center;
-            box-shadow: 0 0 100px rgba(255,0,0,0.1);
-        }
     </style>
 </head>
 <body class="theme-home">
 
+    <div class="scanlines"></div>
+    <div class="hacker-line"></div>
     <div class="tech-grid"></div>
-    <div class="vignette"></div>
+    <div class="data-stream" id="dataStream"></div>
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- LOADING OVERLAY -->
+    <!-- LOADING SEQUENCE -->
     <div id="loadingScreen">
-        <div class="glitch-text" id="loadText">Chill out tiger cheater</div>
-        <div class="loader-line">
-            <div class="loader-fill" id="loadBar"></div>
-        </div>
-        <div style="margin-top: 15px; color: #555; font-size: 0.8rem; font-family: monospace;" id="loadLog">INITIALIZING BYPASS...</div>
+        <div class="loading-text glitch" id="loadText">SYSTEM_BOOT</div>
+        <div class="loading-bar-wrap"><div class="loading-bar-fill" id="loadBar"></div></div>
+        <div style="margin-top:20px; color:var(--primary); font-family:'Share Tech Mono'; font-size:0.8rem;" id="loadLog">FETCHING SYSTEM ASSETS...</div>
     </div>
 
-    <!-- LOCK / COMING SOON OVERLAY -->
-    <div id="lockScreen">
-        <div class="lock-modal">
-            <i data-lucide="lock" style="color: var(--primary); width: 48px; height: 48px; margin-bottom: 20px;"></i>
-            <h2 style="font-family: 'Orbitron'; font-size: 2rem; margin: 0; color: #fff;">WAIT FOR RELEASE</h2>
-            <p style="color: #666; font-size: 1rem; margin: 20px 0 30px;">SPanel v4 is still in private beta testing phase.</p>
-            <button onclick="closeLock()" class="cyber-btn" style="padding: 10px 30px; font-size: 0.9rem; margin: 0 auto;">CLOSE</button>
+    <!-- MODAL GUI (ENGLISH) -->
+    <div id="downloadGui" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 420px; background: #0a0a0a; border: 1px solid var(--primary); z-index: 11000; padding: 35px; box-shadow: 0 0 100px rgba(0,0,0,1); text-align: center; font-family: 'Share Tech Mono';" class="hacker-panel">
+        <i data-lucide="shield-alert" size="50" style="color:var(--primary); margin-bottom:15px;"></i>
+        <h2 class="glitch">ACCESS_DENIED</h2>
+        <p style="color: #ccc; margin: 15px 0;">Wait for the official SPanel release. The core is being stabilized by ALaiShA.</p>
+        <div style="padding: 10px; background: rgba(255,255,255,0.03); border: 1px dashed #333; margin-bottom: 20px;">
+            <p style="font-size: 0.8rem; color: #777;">SUPPORT NODES:<br><span style="color:var(--primary)">ALaiShA | skibidi</span></p>
         </div>
+        <button class="btn-main" style="width: 100%; justify-content: center;" onclick="closeGui()">CONFIRM_ID</button>
     </div>
 
     <header>
-        <div class="logo">
-            <span>S</span>PANEL <span style="font-size: 0.8rem; letter-spacing: 2px; opacity: 0.5;">v4.0</span>
-        </div>
+        <div class="logo">S<span style="color:var(--primary)">PANEL</span></div>
         <nav>
-            <button onclick="switchTab('home')" class="active" id="btn-home">HOME</button>
-            <button onclick="switchTab('music')" id="btn-music">MUSIC</button>
-            <button onclick="switchTab('ai')" id="btn-ai">KHD AI</button>
+            <button onclick="switchTab('home')" id="btn-home" class="active">HOME</button>
+            <button onclick="switchTab('music')" id="btn-music">PLAYLIST</button>
+            <button onclick="switchTab('ai')" id="btn-ai">KHD_IA</button>
         </nav>
     </header>
 
-    <!-- HOME TAB -->
+    <!-- VIEW HOME -->
     <div id="view-home" class="view-content active">
-        <div class="hero-section">
-            <h1 class="hero-title">SYSTEM<br><span>OVERRIDE</span></h1>
-            <div class="hero-subtitle">
-                THE ONLY PANEL WITH GUARANTEED 2025 BYPASS AND KERNEL-LEVEL PROTECTION.
-            </div>
-
-            <div class="action-row">
-                <button class="cyber-btn" onclick="startSequence()">
-                    <i data-lucide="download-cloud"></i> START DOWNLOAD
+        <div class="hero">
+            <h1 class="glitch">S-PANEL<br><span>PROJECT</span></h1>
+            <p>> LEVEL_04_AUTH // ADMIN_PANEL_HUB // <span style="animation: blink 1s infinite;">_</span></p>
+            <div style="margin-top: 40px; display: flex; gap: 20px;">
+                <button class="btn-main hacker-panel" onclick="startDownloadFlow()">
+                    <i data-lucide="download"></i> INITIALIZE DOWNLOAD
                 </button>
-                <a href="https://discord.gg/k8STRGXu" target="_blank" style="text-decoration:none;">
-                    <button class="cyber-btn discord-btn">
-                        <i data-lucide="message-circle"></i> DISCORD
-                    </button>
-                </a>
-            </div>
-
-            <div class="features-dock">
-                <div class="f-card">
-                    <h4>SYSTEM GUARD</h4>
-                    <p>Active anti-detection protection.</p>
-                </div>
-                <div class="f-card">
-                    <h4>LIVE INJECTION</h4>
-                    <p>Lua scripts without game restart.</p>
-                </div>
-                <div class="f-card">
-                    <h4>BYPASS 2025</h4>
-                    <p>Next-gen active protocol.</p>
-                </div>
-            </div>
-
-            <div class="stats-hud">
-                <div class="stat-item">STATUS <b>UNDETECTED</b></div>
-                <div class="stat-item">VERSION <b>4.0.2 BETA</b></div>
-                <div class="stat-item">USER <b>ADMIN_01</b></div>
+                <button class="btn-main hacker-panel" style="background: rgba(88, 101, 242, 0.1); border-color: #5865f2; color: #5865f2;" onclick="window.open('https://discord.gg/k8STRGXu')">
+                    <i data-lucide="message-square"></i> JOIN DISCORD
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- MUSIC TAB -->
+    <!-- VIEW MUSIC -->
     <div id="view-music" class="view-content">
-        <div class="music-layout">
-            <div style="display: flex; flex-direction: column; height: 100%;">
-                <div class="player-frame" style="flex: 1;">
-                    <iframe id="ytFrame" src="https://www.youtube.com/embed/vu4s8ykgJdM?enablejsapi=1" style="width:100%; height:100%; border:none;" allow="autoplay"></iframe>
-                </div>
-                <div style="display: flex; gap: 0; margin-top: 10px;">
-                    <input type="text" id="ytInput" placeholder="Paste YouTube link here..." style="flex: 1; background: #111; border: 1px solid #333; color: white; padding: 15px; font-family: 'Rajdhani';">
-                    <button onclick="playCustom()" style="background: var(--primary); border: none; padding: 0 30px; font-weight: bold; cursor: pointer; color: #000;">PLAY</button>
-                </div>
+        <div style="display: grid; grid-template-columns: 1fr 380px; gap: 20px; height: 100%;">
+            <div class="hacker-panel" style="background: #000; overflow: hidden; border: 1px solid var(--primary);">
+                <iframe id="ytFrame" src="https://www.youtube.com/embed/tHzkYMvRqzo?enablejsapi=1" style="width:100%; height:100%; border:none;"></iframe>
             </div>
-            
-            <div class="track-list" id="trackList"></div>
+            <div id="trackList" style="overflow-y: auto; display: flex; flex-direction: column; gap: 5px;"></div>
         </div>
     </div>
 
-    <!-- AI TAB -->
+    <!-- VIEW AI -->
     <div id="view-ai" class="view-content">
-        <div class="ai-grid">
-            <div class="ai-console">
-                <div style="border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px; font-size: 0.8rem; color: #666; display: flex; justify-content: space-between;">
-                    <span>KHD INTELLIGENCE CORE</span>
-                    <span style="color: var(--primary);">● CONNECTED</span>
+        <div class="ai-container">
+            <div class="chat-window hacker-panel">
+                <div class="chat-header">
+                    <span><i data-lucide="binary" size="16"></i> KHD_CORE_v1.5</span>
+                    <span style="color: #00ff6a;">ONLINE</span>
                 </div>
-                <div class="ai-log" id="aiLog">
-                    <div class="msg khd">
-                        > KHD SYSTEM ONLINE.<br>
-                        > Hello. Select a topic on the side to access my neural database.
-                    </div>
+                <div class="chat-messages" id="chatMsgs">
+                    <div class="msg bot">KHD Terminal Initialized. Systems standing by for query...</div>
                 </div>
             </div>
-
-            <div class="quick-q-grid" id="qGrid"></div>
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <div style="color:var(--primary); font-family:'Orbitron'; font-size:0.8rem; margin-bottom:15px; border-left: 3px solid var(--primary); padding-left: 10px;">QUERY_RESOURCES</div>
+                <div class="chip hacker-panel" onclick="askAI('Who created this site?')"><i data-lucide="terminal"></i> Who created this site?</div>
+                <div class="chip hacker-panel" onclick="askAI('Who created SPanel?')"><i data-lucide="user"></i> Who created SPanel?</div>
+                <div class="chip hacker-panel" onclick="askAI('What is Admin Panel?')"><i data-lucide="help-circle"></i> What is Admin Panel?</div>
+                <div class="chip hacker-panel" onclick="askAI('How to join Discord?')"><i data-lucide="share-2"></i> How to join Discord?</div>
+                <div class="chip hacker-panel" onclick="askAI('SPanel Release Date?')"><i data-lucide="calendar"></i> SPanel Release Date?</div>
+            </div>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        function switchTab(tab) {
-            document.querySelectorAll('.view-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
-            const view = document.getElementById('view-' + tab);
-            const btn = document.getElementById('btn-' + tab);
-            if(view) view.classList.add('active');
-            if(btn) btn.classList.add('active');
-            document.body.className = `theme-${tab}`;
+        const playlist = [
+            { id: "tHzkYMvRqzo", title: "SEMPERO (Super Slowed)", artist: "QMIIR" },
+            { id: "IUq7xu6HtrI", title: "STRUCT (Slowed)", artist: "UdieNnx" },
+            { id: "r4X9W2P7Z0o", title: "Insomnia (Slowed)", artist: "Modlix" },
+            { id: "2CIc50DauYA", title: "Diamondz n Roses", artist: "VaporGod" },
+            { id: "vD6w4v7Gv3M", title: "MEMORIZING (Extended)", artist: "SUKA." }
+        ];
+
+        // English Responses
+        const aiResponses = {
+            "Who created this site?": "Analysis complete: This portal was fully coded by **ALaiShA** for the SPanel community.",
+            "Who created SPanel?": "Database search: **SPanel** is a project led by **ALaiShA** with development assistance from **skibidi**.",
+            "What is Admin Panel?": "Definition: An advanced administration interface used to inject parameters and modify in-game behaviors in Blockman Go.",
+            "How to join Discord?": "Protocol: Click the 'JOIN DISCORD' button on the Home view or contact the admins directly for an invite.",
+            "SPanel Release Date?": "Status: Compilation at 95%. Official release is imminent. Monitor the Discord channel for the final ping."
+        };
+
+        window.onload = () => {
+            generateDataStream();
+            runLoading("CORE_BOOT_V4.5", "SUCCESS_ID_AUTHORIZED", () => {
+                hideLoading();
+            });
+            initMatrix();
+            renderPlaylist();
+        };
+
+        function generateDataStream() {
+            const stream = document.getElementById('dataStream');
+            setInterval(() => {
+                const bit = document.createElement('div');
+                bit.innerText = Math.random() > 0.5 ? '1' : '0';
+                bit.style.opacity = Math.random() * 0.5;
+                stream.prepend(bit);
+                if(stream.children.length > 40) stream.lastChild.remove();
+            }, 150);
         }
 
-        function startSequence() {
+        function runLoading(title, endMsg, callback) {
             const screen = document.getElementById('loadingScreen');
             const bar = document.getElementById('loadBar');
+            const text = document.getElementById('loadText');
             const log = document.getElementById('loadLog');
+            
             screen.style.display = 'flex';
-            const msgs = ["BYPASSING SERVER GUARD...", "INJECTING PAYLOAD...", "DECRYPTING ASSETS...", "TIGER CHEATER DETECTED...", "FINALIZING..."];
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 1.5;
-                if(progress > 100) progress = 100;
-                if(bar) bar.style.width = progress + "%";
-                if(Math.random() > 0.85 && log) {
-                    log.innerText = msgs[Math.floor(Math.random() * msgs.length)];
+            screen.style.opacity = '1';
+            text.innerText = title;
+            let p = 0;
+            const msgs = ["BYPASSING...", "DECRYPTING...", "PARSING...", "STABILIZING...", "AUTH_OK"];
+            
+            const int = setInterval(() => {
+                p += Math.random() * 4;
+                if (p > 100) p = 100;
+
+                bar.style.width = p + "%";
+                if(Math.floor(p) % 20 === 0) log.innerText = msgs[Math.floor(p/21)] || "FINALIZING...";
+                
+                if(p >= 100) {
+                    clearInterval(int);
+                    log.innerText = endMsg;
+                    setTimeout(callback, 800);
                 }
-                if(progress === 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        screen.style.display = 'none';
-                        const lock = document.getElementById('lockScreen');
-                        if(lock) lock.style.display = 'flex';
-                    }, 800);
-                }
-            }, 30);
+            }, 45);
         }
 
-        function closeLock() { 
-            const el = document.getElementById('lockScreen');
-            if(el) el.style.display = 'none'; 
+        function hideLoading() {
+            const screen = document.getElementById('loadingScreen');
+            screen.style.opacity = '0';
+            setTimeout(() => screen.style.display = 'none', 500);
         }
 
-        function playCustom() {
-            let val = document.getElementById('ytInput').value;
-            if(!val) return;
-            let id = val.split('v=')[1] || val.split('/').pop();
-            if(id.includes('&')) id = id.split('&')[0];
-            if(id) document.getElementById('ytFrame').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+        function switchTab(tab) {
+            runLoading(`${tab.toUpperCase()}_LINK...`, "READY", () => {
+                hideLoading();
+                executeTabSwitch(tab);
+            });
         }
 
-        (function() {
-            const canvas = document.getElementById('matrixCanvas');
-            if(canvas) {
-                const ctx = canvas.getContext('2d');
-                let w, h;
-                const setSize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
-                setSize();
-                window.onresize = setSize;
-                const cols = Math.floor(w / 20);
-                const ypos = Array(cols).fill(0);
-                function matrix() {
-                    ctx.fillStyle = '#0001';
-                    ctx.fillRect(0, 0, w, h);
-                    const color = getComputedStyle(document.body).getPropertyValue('--primary').trim();
-                    ctx.fillStyle = color || '#0f0';
-                    ctx.font = '12pt monospace';
-                    ypos.forEach((y, ind) => {
-                        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-                        const x = ind * 20;
-                        ctx.fillText(text, x, y);
-                        if (y > 100 + Math.random() * 10000) ypos[ind] = 0;
-                        else ypos[ind] = y + 20;
-                    });
-                }
-                setInterval(matrix, 50);
-            }
+        function executeTabSwitch(tab) {
+            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById('view-' + tab).classList.add('active');
+            document.getElementById('btn-' + tab).classList.add('active');
+            document.body.className = 'theme-' + tab;
+        }
 
-            const songs = [
-                { id: "vu4s8ykgJdM", title: "Darkwave & Gothic Synth" },
-                { id: "KZvVWnRUrkU", title: "Phonk Gaming Mix" },
-                { id: "9QJvBJU7RsY", title: "Metamorphosis - Phonk" },
-                { id: "w-sQRS-z974", title: "Murder In My Mind" },
-                { id: "f5exxS6hCcs", title: "Brazilian Phonk (Automotivo)" },
-                { id: "p0E60212pXM", title: "Funk Super Cheater Mix" },
-                { id: "V3-U4d05Vqw", title: "Goth Playlist 2025" },
-                { id: "Qz62aJ7T2P4", title: "Cyberpunk 2077 - Rebel Path" },
-                { id: "P29d6lW7zQM", title: "Tiger Cheater Theme" },
-                { id: "1g10n0f8", title: "Super Trap Brazil" }
-            ];
+        function askAI(question) {
+            const chat = document.getElementById('chatMsgs');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg user';
+            userMsg.innerText = question;
+            chat.appendChild(userMsg);
+            chat.scrollTop = chat.scrollHeight;
 
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'msg bot';
+                botMsg.innerHTML = `<i>Querying Database...</i>`;
+                chat.appendChild(botMsg);
+                chat.scrollTop = chat.scrollHeight;
+
+                setTimeout(() => {
+                    botMsg.innerHTML = aiResponses[question] || "ERROR: Unknown Query Segment.";
+                    chat.scrollTop = chat.scrollHeight;
+                }, 1000);
+            }, 400);
+        }
+
+        function startDownloadFlow() {
+            runLoading("CHECKING_AUTH_TOKEN", "REJECTED_BY_SERVER", () => {
+                hideLoading();
+                document.getElementById('downloadGui').style.display = 'block';
+            });
+        }
+
+        function closeGui() { document.getElementById('downloadGui').style.display = 'none'; }
+
+        function renderPlaylist() {
             const list = document.getElementById('trackList');
-            if(list) {
-                songs.forEach(s => {
-                    const row = document.createElement('div');
-                    row.className = 'track-row';
-                    row.onclick = () => {
-                        const f = document.getElementById('ytFrame');
-                        if(f) f.src = `https://www.youtube.com/embed/${s.id}?autoplay=1`;
-                    };
-                    row.innerHTML = `<img src="https://img.youtube.com/vi/${s.id}/mqdefault.jpg"><span>${s.title}</span>`;
-                    list.appendChild(row);
-                });
-            }
+            playlist.forEach(t => {
+                const item = document.createElement('div');
+                item.className = 'hacker-panel';
+                item.style.padding = "10px";
+                item.style.marginBottom = "5px";
+                item.style.display = "flex";
+                item.style.gap = "15px";
+                item.style.alignItems = "center";
+                item.style.cursor = "pointer";
+                item.innerHTML = `
+                    <img src="https://img.youtube.com/vi/${t.id}/default.jpg" style="width: 50px; border: 1px solid var(--primary);">
+                    <div>
+                        <div style="font-weight:bold; font-size:0.9rem;">${t.title}</div>
+                        <div style="font-size:0.7rem; color:var(--primary);">${t.artist}</div>
+                    </div>
+                `;
+                item.onclick = () => { 
+                    document.getElementById('ytFrame').src = `https://www.youtube.com/embed/${t.id}?autoplay=1`; 
+                };
+                list.appendChild(item);
+            });
+        }
 
-            const questions = [
-                { q: "Does SPanel work on Blockman Go?", a: "Yes, it was specifically developed for the latest BMGO version." },
-                { q: "What is the Menu key?", a: "Use INSERT or RIGHT SHIFT to open the in-game menu." },
-                { q: "What is Killaura?", a: "Combat module that automatically attacks enemies within a 4-block radius." },
-                { q: "How do I use Fly?", a: "Enable the Flight module in the Movement tab and press F to toggle." },
-                { q: "What is Bypass?", a: "System that ignores server checks to allow cheats." },
-                { q: "Is there a Ban risk?", a: "There are always risks. Use secondary accounts (alts)." },
-                { q: "What is Velocity?", a: "Removes knockback when you take damage." },
-                { q: "How to inject scripts?", a: "Go to the Scripts tab, paste Lua code, and click Execute." },
-                { q: "What is Tiger Cheater?", a: "Codename for the project for aggressive (Rage) users." },
-                { q: "Does it have ESP?", a: "Yes, ESP Box, Tracer, and Nametags included." },
-                { q: "Does Scaffold work?", a: "Yes, builds bridges automatically below you." },
-                { q: "What is Reach?", a: "Increases your attack range up to 5 blocks." },
-                { q: "Is there Speed Mine?", a: "Yes, breaks blocks faster than normal." },
-                { q: "What is Phase?", a: "Allows passing through doors and thin walls." },
-                { q: "Does it have AutoArmor?", a: "Automatically equips the best available armor." },
-                { q: "Where do I download configs?", a: "In our official Discord, #configs channel." },
-                { q: "What is ChestStealer?", a: "Automatically steals items from chests when opened." },
-                { q: "Works on emulator?", a: "Yes, compatible with LDPlayer and BlueStacks." },
-                { q: "Need Root?", a: "No, works in virtualized mode without root." },
-                { q: "When is v5 coming out?", a: "Soon, wait for Discord announcements." },
-                { q: "What is NoFall?", a: "Prevents fall damage." },
-                { q: "Does it have AimAssist?", a: "Yes, helps aim smoothly at the nearest enemy." },
-                { q: "How to save config?", a: "Type .save [name] in game chat." },
-                { q: "How to load config?", a: "Type .load [name] in game chat." },
-                { q: "What is BunnyHop?", a: "Automatically jumps to gain speed." },
-                { q: "Does it have AntiBot?", a: "Yes, removes anti-cheat bots from targets." },
-                { q: "What is Criticals?", a: "Ensures critical hits on every strike." },
-                { q: "Is there a Timer?", a: "Speeds up the game (Speedhack)." },
-                { q: "Does Freecam work?", a: "Yes, allows body exit and flying around map." },
-                { q: "Can I share configs?", a: "Yes, send the .cfg file to friends." },
-                { q: "Panel closes itself?", a: "Check if antivirus is off." },
-                { q: "Windows Defender detects it?", a: "False positive. Disable to use." },
-                { q: "Support for themes?", a: "Yes, this panel changes color per tab." },
-                { q: "Who created SPanel?", a: "ALaiShA Team and Skibidi Dev Team." },
-                { q: "How to report bugs?", a: "Open a ticket on Discord." },
-                { q: "What is AutoClicker?", a: "Automatically clicks (configurable CPS)." },
-                { q: "Is there FastEat?", a: "Consumes items instantly." },
-                { q: "What is Xray?", a: "See ores through walls." },
-                { q: "Works on BedWars?", a: "Yes, optimized for BedWars." },
-                { q: "Works on SkyWars?", a: "Yes, with AutoLoot." },
-                { q: "Is there SafeWalk?", a: "Prevents falling off block edges." },
-                { q: "What is Jesus?", a: "Allows walking on water." },
-                { q: "Does it have Spider?", a: "Allows climbing walls." },
-                { q: "What is Blink?", a: "Simulates lag for short teleport." },
-                { q: "Does it have AutoPot?", a: "Throws health potions automatically." },
-                { q: "What is AutoSoup?", a: "Drinks soups automatically (KitPvP)." },
-                { q: "Is there TriggerBot?", a: "Attacks automatically when crosshair is on enemy." },
-                { q: "What is Blatant mode?", a: "Rage mode, no disguises." },
-                { q: "What is Legit mode?", a: "Disguised mode to avoid bans." },
-                { q: "Is KHD real?", a: "I am a virtual intelligence of SPanel." }
-            ];
-
-            const qGrid = document.getElementById('qGrid');
-            const aiLog = document.getElementById('aiLog');
-            if(qGrid && aiLog) {
-                questions.forEach(item => {
-                    const chip = document.createElement('div');
-                    chip.className = 'q-chip';
-                    chip.innerHTML = `<span>${item.q}</span> <i data-lucide="chevron-right"></i>`;
-                    chip.onclick = () => {
-                        const u = document.createElement('div');
-                        u.className = 'msg user';
-                        u.innerHTML = item.q;
-                        aiLog.appendChild(u);
-                        setTimeout(() => {
-                            const k = document.createElement('div');
-                            k.className = 'msg khd';
-                            k.innerHTML = `> ${item.a}`;
-                            aiLog.appendChild(k);
-                            aiLog.scrollTop = aiLog.scrollHeight;
-                        }, 200);
-                        aiLog.scrollTop = aiLog.scrollHeight;
-                    };
-                    qGrid.appendChild(chip);
-                });
+        function initMatrix() {
+            const c = document.getElementById('matrixCanvas');
+            const ctx = c.getContext('2d');
+            c.width = window.innerWidth; c.height = window.innerHeight;
+            const chars = '01ｱｲｳｴｵ'.split('');
+            const fontSize = 16;
+            const columns = c.width/fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, c.width, c.height);
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary');
+                ctx.font = fontSize + 'px monospace';
+                for(let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random()*chars.length)];
+                    ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+                    if(drops[i]*fontSize > c.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
             }
-        })();
+            setInterval(draw, 50);
+        }
     </script>
-</body>
-</html>
 </body>
 </html>
