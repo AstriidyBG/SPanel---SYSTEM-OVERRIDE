@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="ALaiShA">
-    <title>SPanel v4.5 - ADMIN PANEL</title>
+    <title>SPanel v4.6 - ADMIN PANEL</title>
     
-    <!-- FONTES E ÍCONES (Não mexer aqui) -->
+    <!-- FONTES E ÍCONES -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         /* ============================================================
-           CONFIGURAÇÃO DE CORES (MODIFIQUE AQUI OS TEMAS)
+           CONFIGURAÇÃO DE CORES E TEMAS
            ============================================================ */
         :root {
-            --primary: #ff003c; /* Cor principal (Vermelho) */
+            --primary: #ff003c; 
             --primary-glow: rgba(255, 0, 60, 0.5);
             --bg-dark: #020202;
             --panel-bg: rgba(6, 6, 6, 0.95);
@@ -25,21 +25,23 @@
             --pride-gradient: linear-gradient(90deg, #ff0000, #ff8700, #ffd300, #deff0a, #a1ff0a, #0aff99, #0aefff, #147df5, #580aff, #be0aff);
         }
 
-        /* Cores dos Temas (Basta trocar o código HEX como #00ff00) */
+        /* --- NOVOS TEMAS BRASIL E ESPANHA --- */
+        body.theme-brazil { --primary: #009b3a; --primary-glow: rgba(0, 155, 58, 0.5); --border: #fedf00; }
+        body.theme-spain { --primary: #aa151b; --primary-glow: rgba(170, 21, 27, 0.5); --border: #fabd00; }
+        
+        /* TEMAS ADICIONAIS */
         body.theme-green { --primary: #00ff41; --primary-glow: rgba(0, 255, 65, 0.5); --border: rgba(0, 255, 65, 0.3); }
         body.theme-blue { --primary: #00d2ff; --primary-glow: rgba(0, 210, 255, 0.5); --border: rgba(0, 210, 255, 0.3); }
         body.theme-purple { --primary: #bc00ff; --primary-glow: rgba(188, 0, 255, 0.5); --border: rgba(188, 0, 255, 0.3); }
         body.theme-gold { --primary: #ffcc00; --primary-glow: rgba(255, 204, 0, 0.5); --border: rgba(255, 204, 0, 0.3); }
         body.theme-pink { --primary: #ff00ff; --primary-glow: rgba(255, 0, 255, 0.5); --border: rgba(255, 0, 255, 0.3); }
-        body.theme-emerald { --primary: #50c878; --primary-glow: rgba(80, 200, 120, 0.5); --border: rgba(80, 200, 120, 0.3); }
-        body.theme-ice { --primary: #f0f8ff; --primary-glow: rgba(240, 248, 255, 0.5); --border: rgba(240, 248, 255, 0.3); }
-        
+
         body.theme-pride { --primary: #ffffff; --primary-glow: rgba(255, 255, 255, 0.3); --border: #ffffff; }
-        body.theme-pride .logo span, body.theme-pride .btn-core, body.theme-pride #clock, body.theme-pride .win-title, body.theme-pride .welcome-hero h1, body.theme-pride .welcome-hero p span {
+        body.theme-pride .logo span, body.theme-pride .btn-core, body.theme-pride #clock, body.theme-pride .win-title, body.theme-pride .welcome-hero h1 {
             background: var(--pride-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold;
         }
 
-        /* EFEITOS VISUAIS (CRT/SCANLINES) */
+        /* EFEITOS VISUAIS */
         body::before {
             content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
@@ -52,7 +54,6 @@
             background: var(--primary); box-shadow: 0 0 15px var(--primary);
             z-index: 10002; opacity: 0.3; animation: scan 8s linear infinite; pointer-events: none;
         }
-
         @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
 
         /* RESET GERAL */
@@ -61,12 +62,12 @@
 
         #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; }
 
-        /* LOGO CENTRAL */
+        /* HERO */
         .welcome-hero { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 0; pointer-events: none; width: 100%; }
         .welcome-hero h1 { font-family: 'Orbitron'; font-size: clamp(4rem, 15vw, 10rem); font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--primary); margin: 0; letter-spacing: 25px; opacity: 0.15; text-transform: uppercase; }
         .welcome-hero p { font-family: 'Share Tech Mono'; color: var(--primary); letter-spacing: 8px; text-transform: uppercase; font-size: 0.8rem; margin-top: -10px; opacity: 0.4; }
 
-        /* BARRA DE TAREFAS */
+        /* TASKBAR */
         .taskbar { height: 60px; background: #000; border-bottom: 2px solid var(--primary); display: flex; align-items: center; padding: 0 25px; position: relative; z-index: 10000; }
         .logo { font-family: 'Orbitron'; font-weight: 900; font-size: 1.4rem; letter-spacing: 4px; color: #fff; text-shadow: 0 0 10px var(--primary); }
         .logo span { color: var(--primary); }
@@ -75,29 +76,29 @@
         .icon-btn { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 8px 15px; display: flex; align-items: center; gap: 8px; font-family: 'Orbitron'; font-size: 0.6rem; transition: 0.3s; cursor: pointer; clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%); }
         .icon-btn:hover, .icon-btn.active { color: #fff; border-color: var(--primary); background: rgba(255, 0, 60, 0.15); box-shadow: 0 0 15px var(--primary-glow); }
 
-        /* JANELAS */
+        /* WINDOWS */
         .window { position: absolute; background: var(--panel-bg); border: 1px solid var(--primary); display: none; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.8); backdrop-filter: blur(10px); clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); min-width: 300px; }
-        .window.active { display: flex; }
         .win-header { height: 35px; background: rgba(255, 0, 60, 0.15); border-bottom: 1px solid var(--primary); display: flex; justify-content: space-between; align-items: center; padding: 0 15px; cursor: grab; }
         .win-title { font-family: 'Orbitron'; font-size: 0.65rem; color: #fff; font-weight: bold; letter-spacing: 1px; }
         .win-btn { color: var(--text-dim); cursor: pointer; transition: 0.2s; display: flex; align-items: center; }
         .win-btn:hover { color: var(--primary); transform: scale(1.1); }
         .win-body { flex: 1; padding: 15px; overflow-y: auto; position: relative; }
 
-        /* GRADES E BOTÕES */
-        .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .theme-swatch { height: 45px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-family: 'Orbitron'; transition: 0.2s; text-align: center; }
-        .theme-swatch:hover { border-color: #fff; transform: translateY(-2px); }
+        /* THEME GRID */
+        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .theme-swatch { height: 50px; border: 1px solid var(--border); background: rgba(0,0,0,0.4); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.55rem; font-family: 'Orbitron'; transition: 0.2s; }
+        .theme-swatch:hover { border-color: #fff; transform: translateY(-2px); background: rgba(255,255,255,0.05); }
+        .preview-bar { width: 80%; height: 4px; margin-bottom: 5px; }
 
-        .btn-core { background: #000; border: 1px solid var(--primary); color: var(--primary); font-family: 'Orbitron'; font-size: 0.65rem; padding: 10px; font-weight: bold; transition: 0.3s; width: 100%; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; clip-path: polygon(5% 0, 100% 0, 100% 70%, 95% 100%, 0 100%, 0 30%); margin-bottom: 8px; }
+        /* BUTTONS & INPUTS */
+        .btn-core { background: #000; border: 1px solid var(--primary); color: var(--primary); font-family: 'Orbitron'; font-size: 0.65rem; padding: 10px; font-weight: bold; transition: 0.3s; width: 100%; cursor: pointer; text-transform: uppercase; clip-path: polygon(5% 0, 100% 0, 100% 70%, 95% 100%, 0 100%, 0 30%); margin-bottom: 8px; }
         .btn-core:hover { background: var(--primary); color: #fff; box-shadow: 0 0 15px var(--primary); }
+        .input-cyber { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: #fff; padding: 8px; font-family: 'Share Tech Mono'; margin-bottom: 5px; }
 
-        /* LISTA DE MÚSICA */
         .song-item { padding: 10px; background: rgba(255,255,255,0.03); margin-bottom: 5px; border-left: 3px solid transparent; cursor: pointer; font-size: 0.8rem; }
         .song-item:hover, .song-item.active { background: rgba(255,0,60,0.1); border-left-color: var(--primary); }
 
         #clock { min-width: 60px; text-align: center; font-family: 'Share Tech Mono'; color: var(--primary); font-size: 1rem; margin-left: 15px; }
-
         footer { position: fixed; bottom: 0; width: 100%; height: 25px; background: #000; border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 15px; font-size: 0.55rem; color: var(--primary); font-family: 'Share Tech Mono'; z-index: 10005; }
     </style>
 </head>
@@ -106,13 +107,12 @@
     <div class="scanner-line"></div>
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- TEXTOS DO MEIO DA TELA -->
     <div class="welcome-hero">
         <h1>SPANEL</h1>
         <p>Desenvolvido por <span>ALaiShA</span> & <span>skibidi</span></p>
     </div>
 
-    <!-- MENSAGEM DE ERRO/OFFLINE -->
+    <!-- MODAL DE STATUS -->
     <div id="statusModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:20000; display:none; align-items:center; justify-content:center;">
         <div style="width:400px; padding:30px; border:1px solid var(--primary); background:#050505; text-align:center;">
             <i data-lucide="alert-circle" color="var(--primary)" size="40"></i>
@@ -128,6 +128,7 @@
         <div class="nav-icons">
             <div class="icon-btn" onclick="toggleWin('win-browser', this)"><i data-lucide="globe" size="14"></i> NAVEGADOR</div>
             <div class="icon-btn" onclick="toggleWin('win-music', this)"><i data-lucide="music" size="14"></i> PLAYLIST</div>
+            <div class="icon-btn" onclick="toggleWin('win-youtube', this)"><i data-lucide="youtube" size="14"></i> YOUTUBE</div>
             <div class="icon-btn" onclick="toggleWin('win-ai', this)"><i data-lucide="brain" size="14"></i> IA</div>
             <div class="icon-btn" onclick="toggleWin('win-themes', this)"><i data-lucide="palette" size="14"></i> TEMAS</div>
             <div class="icon-btn" onclick="toggleWin('win-dl', this)"><i data-lucide="download" size="14"></i> DOWNLOAD</div>
@@ -135,142 +136,148 @@
         <div id="clock">00:00</div>
     </div>
 
-    <div class="desktop">
-        
-        <!-- JANELA: TEMAS -->
-        <div id="win-themes" class="window" style="top:100px; left:100px; width:350px;">
-            <div class="win-header">
-                <div class="win-title">INTERFACE // TEMAS</div>
-                <div class="win-btn" onclick="toggleWin('win-themes')"><i data-lucide="x" size="16"></i></div>
-            </div>
-            <div class="win-body">
-                <div class="theme-grid">
-                    <div class="theme-swatch" style="background:#ff003c" onclick="setTheme('')">PADRÃO</div>
-                    <div class="theme-swatch" style="background:#00ff41; color:#000" onclick="setTheme('theme-green')">MATRIX</div>
-                    <div class="theme-swatch" style="background:#00d2ff; color:#000" onclick="setTheme('theme-blue')">OCEAN</div>
-                    <div class="theme-swatch" style="background:#bc00ff" onclick="setTheme('theme-purple')">NEON</div>
-                    <div class="theme-swatch" style="background:#ff00ff" onclick="setTheme('theme-pink')">PINK</div>
-                    <div class="theme-swatch" style="background:#50c878; color:#000" onclick="setTheme('theme-emerald')">EMERALD</div>
-                    <div class="theme-swatch" style="background:#f0f8ff; color:#000" onclick="setTheme('theme-ice')">ICE</div>
-                    <div class="theme-swatch" style="background:#ffcc00; color:#000" onclick="setTheme('theme-gold')">OURO</div>
-                    <div class="theme-swatch" style="background:var(--pride-gradient); border:none;" onclick="setTheme('theme-pride')">PRIDE</div>
+    <!-- JANELA: TEMAS -->
+    <div id="win-themes" class="window" style="top:100px; left:100px; width:400px;">
+        <div class="win-header">
+            <div class="win-title">THEME SELECTOR // CORES</div>
+            <div class="win-btn" onclick="toggleWin('win-themes')"><i data-lucide="x" size="16"></i></div>
+        </div>
+        <div class="win-body">
+            <div class="theme-grid">
+                <div class="theme-swatch" onclick="setTheme('theme-brazil')">
+                    <div class="preview-bar" style="background: linear-gradient(90deg, #009b3a, #fedf00)"></div>
+                    BRASIL
+                </div>
+                <div class="theme-swatch" onclick="setTheme('theme-spain')">
+                    <div class="preview-bar" style="background: linear-gradient(90deg, #aa151b, #fabd00)"></div>
+                    ESPANHA
+                </div>
+                <div class="theme-swatch" onclick="setTheme('')">
+                    <div class="preview-bar" style="background: #ff003c"></div>
+                    PADRÃO RED
+                </div>
+                <div class="theme-swatch" onclick="setTheme('theme-blue')">
+                    <div class="preview-bar" style="background: #00d2ff"></div>
+                    CYBER BLUE
+                </div>
+                <div class="theme-swatch" onclick="setTheme('theme-green')">
+                    <div class="preview-bar" style="background: #00ff41"></div>
+                    MATRIX
+                </div>
+                <div class="theme-swatch" onclick="setTheme('theme-purple')">
+                    <div class="preview-bar" style="background: #bc00ff"></div>
+                    VIOLET
+                </div>
+                <div class="theme-swatch" onclick="setTheme('theme-gold')">
+                    <div class="preview-bar" style="background: #ffcc00"></div>
+                    GOLD
+                </div>
+                <div class="theme-swatch" onclick="setTheme('theme-pride')">
+                    <div class="preview-bar" style="background: var(--pride-gradient)"></div>
+                    PRIDE
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- JANELA: MÚSICA -->
-        <div id="win-music" class="window" style="top:150px; left:200px; width:650px; height:450px;">
-            <div class="win-header">
-                <div class="win-title">MEDIA PLAYER // 2025 MIX</div>
-                <div class="win-btn" onclick="toggleWin('win-music')"><i data-lucide="x" size="16"></i></div>
+    <!-- JANELA: MÚSICA -->
+    <div id="win-music" class="window" style="top:150px; left:200px; width:650px; height:450px;">
+        <div class="win-header">
+            <div class="win-title">MEDIA PLAYER // 2025 MIX</div>
+            <div class="win-btn" onclick="toggleWin('win-music')"><i data-lucide="x" size="16"></i></div>
+        </div>
+        <div class="win-body" style="display:grid; grid-template-columns: 1fr 220px; gap:15px; height: calc(100% - 35px);">
+            <div style="background:#000; display:flex; flex-direction:column; border:1px solid var(--border);">
+                <iframe id="ytPlayer" style="width:100%; flex:1; border:none;" src=""></iframe>
+                <div id="songTitle" style="padding:10px; color:var(--primary); font-size:0.75rem; font-family:'Orbitron';">PRONTO...</div>
             </div>
-            <div class="win-body" style="display:grid; grid-template-columns: 1fr 220px; gap:15px; height: calc(100% - 35px);">
-                <div style="background:#000; display:flex; flex-direction:column; border:1px solid var(--border);">
-                    <iframe id="ytPlayer" style="width:100%; flex:1; border:none;" src=""></iframe>
-                    <div id="songTitle" style="padding:10px; color:var(--primary); font-size:0.75rem; font-family:'Orbitron'; background: rgba(0,0,0,0.8);">PRONTO...</div>
-                </div>
-                <div id="songList" style="overflow-y:auto; background: rgba(0,0,0,0.3); padding: 5px;"></div>
+            <div style="display:flex; flex-direction:column;">
+                <input type="text" id="customMusicInput" class="input-cyber" placeholder="Link YouTube...">
+                <button class="btn-core" onclick="playCustomSong()">TOCAR</button>
+                <div id="songList" style="overflow-y:auto; flex:1; margin-top:10px;"></div>
             </div>
         </div>
+    </div>
 
-        <!-- JANELA: NAVEGADOR (GOOGLE INTEGRADO) -->
-        <div id="win-browser" class="window" style="top:100px; left:150px; width:800px; height:550px;">
-            <div class="win-header">
-                <div class="win-title">S-NET // GOOGLE INTEGRATED</div>
-                <div class="win-btn" onclick="toggleWin('win-browser')"><i data-lucide="x" size="16"></i></div>
-            </div>
-            <div class="win-body" style="padding:0; display:flex; flex-direction:column;">
-                <div style="display:flex; gap:10px; padding:10px; background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--border);">
-                    <input type="text" id="webIn" style="flex:1; background:rgba(0,0,0,0.5); border:1px solid var(--border); color:#fff; padding:8px; font-family:'Share Tech Mono';" placeholder="O que deseja buscar no Google?">
-                    <button class="btn-core" style="width:80px; margin:0;" onclick="loadGoogle()">BUSCAR</button>
-                </div>
-                <div id="browserContainer" style="flex:1; background: #fff;">
-                    <!-- Usando o DuckDuckGo Search ou Bing como base porque o Google bloqueia IFrames. Isso garante que abra dentro do site. -->
-                    <iframe id="googleIframe" src="https://www.bing.com" style="width:100%; height:100%; border:none;"></iframe>
-                </div>
-            </div>
+    <!-- JANELA: YOUTUBE -->
+    <div id="win-youtube" class="window" style="top:120px; left:250px; width:700px; height:500px;">
+        <div class="win-header">
+            <div class="win-title">YOUTUBE // VIEWER</div>
+            <div class="win-btn" onclick="toggleWin('win-youtube')"><i data-lucide="x" size="16"></i></div>
         </div>
-
-        <!-- JANELA: IA -->
-        <div id="win-ai" class="window" style="top:80px; right:50px; width:400px; height:500px;">
-            <div class="win-header">
-                <div class="win-title">NEURAL CORE // SKIBIDI AI</div>
-                <div class="win-btn" onclick="toggleWin('win-ai')"><i data-lucide="x" size="16"></i></div>
+        <div class="win-body" style="display:flex; flex-direction:column; padding:0;">
+            <div style="padding:10px; background:rgba(0,0,0,0.8); border-bottom:1px solid var(--border); display:flex; gap:10px;">
+                <input type="text" id="ytVideoInput" class="input-cyber" style="margin:0;" placeholder="Cole o link...">
+                <button class="btn-core" style="width:100px; margin:0;" onclick="loadYoutubeVideo()">ASSISTIR</button>
             </div>
-            <div class="win-body" style="display:flex; flex-direction:column;">
-                <div id="aiChat" style="flex:1; background:rgba(0,0,0,0.3); border:1px solid var(--border); padding:10px; font-family:'Share Tech Mono'; font-size:0.75rem; overflow-y:auto;">
-                    <div style="color:var(--primary)">[SISTEMA]: Skibidi Neural Core v1.0 ONLINE.</div>
-                </div>
-                <div id="aiButtons" style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-top:10px;"></div>
-            </div>
+            <iframe id="mainYtFrame" style="flex:1; border:none;" src=""></iframe>
         </div>
+    </div>
 
-        <!-- JANELA: DOWNLOAD -->
-        <div id="win-dl" class="window" style="bottom:100px; left:50%; transform:translateX(-50%); width:350px;">
-            <div class="win-header">
-                <div class="win-title">SYSTEM UPDATE // DL</div>
-                <div class="win-btn" onclick="toggleWin('win-dl')"><i data-lucide="x" size="16"></i></div>
-            </div>
-            <div class="win-body" style="text-align:center;">
-                <div id="dlStatus" style="font-family:'Orbitron'; font-size:0.7rem; margin-bottom:10px;">AGUARDANDO...</div>
-                <div style="height:3px; background:#111; margin-bottom:15px;">
-                    <div id="dlBar" style="height:100%; width:0%; background:var(--primary); transition: width 0.1s;"></div>
-                </div>
-                <button class="btn-core" onclick="startDL()">INICIAR DOWNLOAD</button>
-            </div>
+    <!-- JANELA: NAVEGADOR -->
+    <div id="win-browser" class="window" style="top:100px; left:150px; width:800px; height:550px;">
+        <div class="win-header">
+            <div class="win-title">S-NET // WEB EXPLORER</div>
+            <div class="win-btn" onclick="toggleWin('win-browser')"><i data-lucide="x" size="16"></i></div>
         </div>
+        <div class="win-body" style="padding:0; display:flex; flex-direction:column;">
+            <div style="display:flex; gap:10px; padding:10px; background: rgba(0,0,0,0.8); border-bottom: 1px solid var(--border);">
+                <input type="text" id="webIn" class="input-cyber" style="margin:0;" placeholder="Buscar na web...">
+                <button class="btn-core" style="width:80px; margin:0;" onclick="loadGoogle()">IR</button>
+            </div>
+            <iframe id="googleIframe" src="https://www.bing.com" style="flex:1; border:none;"></iframe>
+        </div>
+    </div>
 
+    <!-- JANELA: IA -->
+    <div id="win-ai" class="window" style="top:80px; right:50px; width:400px; height:500px;">
+        <div class="win-header">
+            <div class="win-title">NEURAL CORE // AI</div>
+            <div class="win-btn" onclick="toggleWin('win-ai')"><i data-lucide="x" size="16"></i></div>
+        </div>
+        <div class="win-body" style="display:flex; flex-direction:column;">
+            <div id="aiChat" style="flex:1; background:rgba(0,0,0,0.3); border:1px solid var(--border); padding:10px; font-family:'Share Tech Mono'; font-size:0.75rem; overflow-y:auto;">
+                <div style="color:var(--primary)">[SISTEMA]: Skibidi Neural Core v1.0 ONLINE.</div>
+            </div>
+            <div id="aiButtons" style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-top:10px;"></div>
+        </div>
+    </div>
+
+    <!-- JANELA: DOWNLOAD -->
+    <div id="win-dl" class="window" style="bottom:100px; left:50%; transform:translateX(-50%); width:350px;">
+        <div class="win-header">
+            <div class="win-title">SYSTEM UPDATE // DL</div>
+            <div class="win-btn" onclick="toggleWin('win-dl')"><i data-lucide="x" size="16"></i></div>
+        </div>
+        <div class="win-body" style="text-align:center;">
+            <div id="dlStatus" style="font-family:'Orbitron'; font-size:0.7rem; margin-bottom:10px;">AGUARDANDO...</div>
+            <div style="height:3px; background:#111; margin-bottom:15px;">
+                <div id="dlBar" style="height:100%; width:0%; background:var(--primary); transition: width 0.1s;"></div>
+            </div>
+            <button class="btn-core" onclick="startDL()">INICIAR DOWNLOAD</button>
+        </div>
     </div>
 
     <footer>
         <i data-lucide="shield" size="10" style="margin-right:8px"></i>
-        <span>SPanel v4.5 Stable // Modificado para fácil edição</span>
+        <span>SPanel v4.6 Theme Edition // ALaiShA & skibidi</span>
     </footer>
 
-    <!-- ============================================================
-         LÓGICA DO SITE (PARA MODIFICAR MÚSICAS E IA)
-         ============================================================ -->
     <script>
-        /* ------------------------------------------------------------
-           PLAYLIST DE MÚSICAS (ADICIONE NOVAS AQUI)
-           Instruções: 'id' é o código que fica no final do link do YouTube
-           Exemplo: youtube.com/watch?v=CODIGO
-           ------------------------------------------------------------ */
-const musicList = [
-  // MATUÊ (30PRAUM / oficiais) — itens problemáticos removidos
-{ id: "3YE2JNOA5kA", t: "Matuê - Armamento Russo" },
-  { id: "Z3_jY015bsE", t: "Matuê - XTRANHO" },
-  
-  // PHONK / BRAZILIAN PHONK
-  { id: "mmPSultmVtg", t: "Best Phonk 2025" },
-  { id: "u0VfXavVrjc", t: "Rio Phonk Viral" },
-  { id: "VYUHabpY7ks", t: "Funk Viral 2025" }
-  
-];
+        const musicList = [
+            { id: "3YE2JNOA5kA", t: "Matuê - Armamento Russo" },
+            { id: "Z3_jY015bsE", t: "Matuê - XTRANHO" },
+            { id: "mmPSultmVtg", t: "Best Phonk 2025" },
+            { id: "u0VfXavVrjc", t: "Rio Phonk Viral" },
+            { id: "VYUHabpY7ks", t: "Funk Viral 2025" }
+        ];
 
-// Função para gerar o link completo do YouTube
-function getYouTubeLink(id) {
-  return `https://www.youtube.com/watch?v=${id}`;
-}
-
-// Testando a lista
-musicList.forEach(music => {
-  console.log(music.t, ":", getYouTubeLink(music.id));
-});
-
-        /* ------------------------------------------------------------
-           PERGUNTAS DA IA (ADICIONE NOVAS AQUI)
-           ------------------------------------------------------------ */
         const aiDatabase = [
             { q: "Quem criou?", r: "Interface por ALaiShA e Código por skibidi." },
             { q: "Segurança?", r: "Proteção S-Net v4.5 ativa e criptografada." },
-            { q: "Versão?", r: "Você está usando a build 4.5.2 de 2025." },
-            { q: "Novidades?", r: "Novos temas e Google integrado agora disponíveis." }
+            { q: "Novidades?", r: "Adicionado suporte a temas regionais (BR/ES) e player v2." }
         ];
 
-        /* ------------------------------------------------------------
-           FUNÇÕES DO SISTEMA (MEXER SÓ SE SOUBER)
-           ------------------------------------------------------------ */
         let zIdx = 1000;
         let matrixInterval;
 
@@ -286,44 +293,19 @@ musicList.forEach(music => {
             });
         }
 
-        // Relógio
+        function setTheme(cls) {
+            document.body.className = cls;
+            // Reinicia a Matrix para adotar a nova cor
+            setTimeout(() => { initMatrix(); lucide.createIcons(); }, 100);
+        }
+
         function startClock() {
-            const clockEl = document.getElementById('clock');
             const update = () => {
-                const d = new Date();
-                clockEl.innerText = d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
             };
             update(); setInterval(update, 10000);
         }
 
-        // Troca de Tema
-        function setTheme(cls) {
-            document.body.className = cls;
-            setTimeout(() => { initMatrix(); lucide.createIcons(); }, 100);
-        }
-
-        // Fundo Matrix
-        function initMatrix() {
-            if (matrixInterval) clearInterval(matrixInterval);
-            const canvas = document.getElementById('matrixCanvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            const columns = Math.floor(canvas.width / 20);
-            const drops = Array(columns).fill(1);
-            const getPrimary = () => getComputedStyle(document.body).getPropertyValue('--primary').trim() || '#ff003c';
-            function draw() {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = getPrimary(); ctx.font = '15px monospace';
-                drops.forEach((y, i) => {
-                    const text = String.fromCharCode(Math.random() * 128); ctx.fillText(text, i * 20, y * 20);
-                    if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0; drops[i]++;
-                });
-            }
-            matrixInterval = setInterval(draw, 50);
-        }
-
-        // Janelas
         function toggleWin(id, btn) {
             const win = document.getElementById(id);
             const isVisible = win.style.display === 'flex';
@@ -346,23 +328,53 @@ musicList.forEach(music => {
             };
         }
 
-        // Carregar Músicas
+        function playSong(id, title, element) {
+            document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+            document.getElementById('songTitle').innerText = title;
+            document.querySelectorAll('.song-item').forEach(i => i.classList.remove('active'));
+            if(element) element.classList.add('active');
+        }
+
+        function playCustomSong() {
+            const input = document.getElementById('customMusicInput').value;
+            if(!input) return;
+            const id = input.includes('v=') ? input.split('v=')[1].split('&')[0] : input;
+            playSong(id, "LINK PERSONALIZADO", null);
+        }
+
+        function loadYoutubeVideo() {
+            const input = document.getElementById('ytVideoInput').value;
+            if(!input) return;
+            const id = input.includes('v=') ? input.split('v=')[1].split('&')[0] : input;
+            document.getElementById('mainYtFrame').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+        }
+
+        function loadGoogle() {
+            const query = document.getElementById('webIn').value;
+            document.getElementById('googleIframe').src = query ? `https://www.bing.com/search?q=${encodeURIComponent(query)}` : "https://www.bing.com";
+        }
+
+        function startDL() {
+            let p = 0;
+            const bar = document.getElementById('dlBar'), status = document.getElementById('dlStatus');
+            const timer = setInterval(() => {
+                p += Math.random() * 4;
+                if (p >= 100) { p = 100; clearInterval(timer); document.getElementById('statusModal').style.display = 'flex'; }
+                bar.style.width = p + '%';
+                status.innerText = `DESCARREGANDO: ${Math.floor(p)}%`;
+            }, 100);
+        }
+
         function loadMusic() {
             const list = document.getElementById('songList');
             musicList.forEach(m => {
                 const div = document.createElement('div');
                 div.className = 'song-item'; div.innerText = m.t;
-                div.onclick = () => {
-                    document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${m.id}?autoplay=1`;
-                    document.getElementById('songTitle').innerText = m.t;
-                    document.querySelectorAll('.song-item').forEach(i => i.classList.remove('active'));
-                    div.classList.add('active');
-                };
+                div.onclick = () => playSong(m.id, m.t, div);
                 list.appendChild(div);
             });
         }
 
-        // Carregar IA
         function loadAI() {
             const area = document.getElementById('aiButtons');
             aiDatabase.forEach(item => {
@@ -380,41 +392,24 @@ musicList.forEach(music => {
             });
         }
 
-        function loadGoogle() {
-            const query = document.getElementById('webIn').value;
-            const iframe = document.getElementById('googleIframe');
-            if (query) {
-                // Nota: Alguns sites bloqueiam iFrames (X-Frame-Options). 
-                // Usamos o DuckDuckGo ou Bing como alternativa se o Google bloquear o frame direto, 
-                // mas configurei para abrir a busca.
-                iframe.src = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
-                // Usei o Bing porque ele permite iFrame mais facilmente que o Google padrão hoje em dia.
-            } else {
-                iframe.src = "https://www.bing.com";
-            }
-        }
-        
-        function startDL() {
-            let p = 0;
-            const bar = document.getElementById('dlBar');
-            const status = document.getElementById('dlStatus');
-            const timer = setInterval(() => {
-                p += Math.random() * 4;
-                if (p >= 100) {
-                    p = 100;
-                    clearInterval(timer);
-                    document.getElementById('statusModal').style.display = 'flex';
-                }
-                bar.style.width = p + '%';
-                status.innerText = `A DESCARREGAR: ${Math.floor(p)}%`;
-            }, 100);
-        }
-
-        window.onresize = () => {
+        function initMatrix() {
+            if (matrixInterval) clearInterval(matrixInterval);
             const canvas = document.getElementById('matrixCanvas');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        };
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            const columns = Math.floor(canvas.width / 20);
+            const drops = Array(columns).fill(1);
+            const getPrimary = () => getComputedStyle(document.body).getPropertyValue('--primary').trim() || '#ff003c';
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = getPrimary(); ctx.font = '15px monospace';
+                drops.forEach((y, i) => {
+                    ctx.fillText(String.fromCharCode(Math.random() * 128), i * 20, y * 20);
+                    if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0; drops[i]++;
+                });
+            }
+            matrixInterval = setInterval(draw, 50);
+        }
     </script>
 </body>
 </html>
