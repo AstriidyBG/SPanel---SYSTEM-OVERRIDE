@@ -1,1585 +1,784 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SPanel - Official Site</title>
+    <title>SPanel - VHS Monochrome Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
+        /* --- CORE VARIABLES (Monochrome) --- */
         :root {
-            /* PURPLE THEME CORE */
-            --primary: #9933FF;
-            --secondary: #4D1A80;
-            --accent: #C792FF;
-            --bg-dark: #0A010F;
-            --glass: rgba(25, 0, 40, 0.85);
-            --modal-bg: rgba(15, 0, 20, 0.95);
+            --bg-dark: #020202;
+            --text-main: #e0e0e0;
         }
 
         body {
             background-color: var(--bg-dark);
-            color: white;
-            font-family: 'Rajdhani', sans-serif;
+            color: var(--text-main);
             overflow-x: hidden;
+            font-family: 'Share Tech Mono', monospace;
             margin: 0;
-            -webkit-tap-highlight-color: transparent;
+            padding: 0;
         }
 
-        /* --- GLOBAL PURPLE SCROLLBAR --- */
+        /* --- FONTS --- */
+        .font-mono { font-family: 'Share Tech Mono', monospace; }
+        .font-cyber { font-family: 'Orbitron', sans-serif; }
 
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #14001f;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--secondary);
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-            box-shadow: 0 0 5px var(--primary);
-        }
-
-        /* --- UTILS --- */
-
-        .font-mono {
-            font-family: 'Share Tech Mono', monospace;
-        }
-
-        .font-cyber {
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .text-neon {
-            text-shadow: 0 0 10px var(--primary);
-        }
-
-        /* --- BACKGROUNDS --- */
-
-        #bg-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(rgba(153, 51, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(153, 51, 255, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        /* --- UI ELEMENTS --- */
-
-        .nav-link {
-            position: relative;
-            padding: 5px 10px;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-        .nav-link:hover {
-            color: var(--primary);
-            text-shadow: 0 0 8px var(--primary);
-        }
-
-        .hero-title {
-            font-size: clamp(3rem, 10vw, 8rem);
-            line-height: 0.9;
-            background: linear-gradient(to bottom, #fff, var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 20px rgba(153, 51, 255, 0.5));
-        }
-
-        .feature-card {
-            background: rgba(10, 0, 15, 0.6);
-            border: 1px solid #2e0f4d;
-            transition: all 0.4s ease;
-            clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%);
-            cursor: pointer;
-        }
-
-        .feature-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(153, 51, 255, 0.15);
-            background: rgba(30, 0, 40, 0.8);
-        }
-
-        .feature-icon-box {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(153, 51, 255, 0.1);
-            clip-path: polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
-            margin-bottom: 1rem;
-        }
-
-        /* --- UNIVERSAL MODAL SYSTEM --- */
-
-        #universal-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 200;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-        }
-
-        #universal-modal.active {
-            opacity: 1;
-            pointer-events: auto;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background: var(--modal-bg);
-            border: 2px solid var(--primary);
-            width: 90%;
-            max-width: 700px;
-            padding: 2rem;
-            position: relative;
-            box-shadow: 0 0 50px rgba(153, 51, 255, 0.3);
-            clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%, 0 15%);
-            transform: scale(0.9) translateY(20px);
-            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        #universal-modal.active .modal-content {
-            transform: scale(1) translateY(0);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            color: #888;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: 0.3s;
-            z-index: 10;
-        }
-
-        .modal-close:hover {
-            color: var(--primary);
-            transform: rotate(90deg);
-        }
-
-        .modal-list-item {
-            border-bottom: 1px solid var(--secondary);
-            padding: 10px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-list-item:last-child {
-            border-bottom: none;
-        }
-
-        .modal-tag {
-            background: rgba(153, 51, 255, 0.1);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 2px 8px;
-            font-size: 0.7rem;
-            font-family: monospace;
-        }
-
-        .modal-tag.ON,
-        .modal-tag.ACTIVE,
-        .modal-tag.RUNNING,
-        .modal-tag.STABLE {
-            background: rgba(0, 255, 0, 0.1);
-            border-color: #00ff00;
-            color: #00ff00;
-        }
-
-        .stat-bar {
-            height: 4px;
-            background: var(--secondary);
-            width: 100%;
-            margin-top: 5px;
-            position: relative;
-        }
-
-        .stat-fill {
-            height: 100%;
-            background: var(--primary);
-            width: 0%;
-            transition: width 1s ease;
-            box-shadow: 0 0 5px var(--primary);
-        }
-
-        /* --- GUI KEYBOARD STYLES --- */
-        .key-row {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 6px;
-        }
+        /* --- UI UTILS --- */
+        .hidden { display: none !important; }
         
-        .cyber-key {
-            background: rgba(77, 26, 128, 0.3);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            font-family: 'Share Tech Mono', monospace;
-            font-weight: bold;
-            padding: 10px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            min-width: 40px;
-            box-shadow: 0 0 5px rgba(153, 51, 255, 0.1);
-            user-select: none;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; border-left: 1px solid #222; }
+        ::-webkit-scrollbar-thumb { background: #444; border: 1px solid #fff; }
+        ::-webkit-scrollbar-thumb:hover { background: #fff; }
+
+        /* --- VHS EFFECTS --- */
+        .vhs-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.02));
+            background-size: 100% 3px, 3px 100%;
+            z-index: 9999; pointer-events: none;
+            animation: flicker 0.1s infinite;
         }
-
-        .cyber-key:hover {
-            background: var(--primary);
-            color: black;
-            box-shadow: 0 0 15px var(--primary);
-            transform: translateY(-2px);
+        .noise {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9998; opacity: 0.07;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
         }
-
-        .cyber-key:active {
-            transform: translateY(1px);
+        .scanline {
+            width: 100%; height: 10px; z-index: 9999;
+            background: rgba(255, 255, 255, 0.05); opacity: 0.4;
+            position: absolute; bottom: 100%;
+            animation: scanline 8s linear infinite; pointer-events: none;
         }
+        @keyframes flicker { 0% { opacity: 0.9; } 50% { opacity: 0.85; } 100% { opacity: 0.98; } }
+        @keyframes scanline { 0% { bottom: 100%; } 100% { bottom: -20%; } }
+        .retro-glow { text-shadow: 0 0 4px rgba(255, 255, 255, 0.6); }
 
-        .cyber-key.space-key {
-            width: 250px;
-        }
-
-        .keyboard-display {
-            background: rgba(10, 0, 15, 0.9);
-            border: 1px solid var(--primary);
-            color: white;
-            font-family: 'Share Tech Mono', monospace;
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            min-height: 60px;
-            box-shadow: inset 0 0 10px rgba(153, 51, 255, 0.2);
-            text-shadow: 0 0 5px var(--primary);
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        /* --- WELCOME SCREEN --- */
-
-        #welcome-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            z-index: 300;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
-        }
-
-        #welcome-screen.hidden-screen {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        /* --- REALTIME USER WIDGET --- */
-
-        #live-user-widget {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(10, 0, 15, 0.9);
-            border: 1px solid var(--secondary);
-            padding: 10px 15px;
-            border-radius: 5px;
-            z-index: 90;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            backdrop-filter: blur(5px);
-            border-left: 3px solid var(--primary);
-            transition: 0.3s;
-        }
-
-        #live-user-widget:hover {
-            box-shadow: 0 0 15px rgba(153, 51, 255, 0.2);
-            border-color: var(--primary);
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
-            box-shadow: 0 0 5px var(--primary);
-            animation: pulse-purple 2s infinite;
-        }
-
-        @keyframes pulse-purple {
-            0% {
-                opacity: 0.5;
-                transform: scale(0.9);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.1);
-            }
-            100% {
-                opacity: 0.5;
-                transform: scale(0.9);
-            }
-        }
-        
-        #volume-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 100;
-            width: 45px;
-            height: 45px;
-            background: rgba(10, 0, 15, 0.9);
-            border: 1px solid var(--secondary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        #volume-control.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        #volume-control:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(153, 51, 255, 0.3);
-            transform: scale(1.1);
-        }
-
-        #volume-control i {
-            color: var(--primary);
-            font-size: 1rem;
-        }
-
-        /* --- MOBILE ADAPTATIONS --- */
-
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 3.5rem;
-                line-height: 1.1;
-            }
-            #live-user-widget {
-                bottom: 15px;
-                left: 15px;
-                font-size: 0.7rem;
-                padding: 8px 12px;
-            }
-             #volume-control {
-                bottom: 15px;
-                right: 15px;
-                width: 40px;
-                height: 40px;
-            }
-            .modal-content {
-                width: 100% !important;
-                height: 100% !important;
-                max-width: none !important;
-                padding: 20px !important;
-                clip-path: none !important;
-                border: none !important;
-                border-top: 2px solid var(--primary) !important;
-                border-bottom: 2px solid var(--primary) !important;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-            #universal-modal {
-                align-items: flex-end;
-            }
-            #u-modal-icon {
-                display: none !important;
-            }
-            .installer-nav {
-                padding: 0 1rem;
-            }
-            .installer-tab {
-                padding: 0.5rem 0.8rem;
-                font-size: 0.75rem;
-            }
-            .installer-tab i {
-                display: none;
-            }
-            .cyber-card {
-                margin: 0;
-                width: 100%;
-                height: 100%;
-                border: none;
-                clip-path: none;
-                padding: 1rem;
-            }
-            ::-webkit-scrollbar {
-                width: 2px;
-            }
-        }
-
-        /* --- INSTALLER VIEW --- */
-
-        #installer-view {
-            display: none;
-            opacity: 0;
-            transition: opacity 1s ease;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 50;
-            flex-direction: column;
-        }
-
-        .installer-nav {
-            width: 100%;
-            height: 60px;
-            border-bottom: 1px solid var(--secondary);
-            background: rgba(10, 0, 15, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 2rem;
-            box-shadow: 0 5px 20px rgba(153, 51, 255, 0.1);
-        }
-
-        .installer-tab {
-            padding: 0.5rem 1.5rem;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.9rem;
-            color: #666;
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .installer-tab:hover {
-            color: white;
-            background: rgba(153, 51, 255, 0.1);
-        }
-
-        .installer-tab.active {
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
-            background: linear-gradient(to top, rgba(153, 51, 255, 0.1), transparent);
-        }
-
-        /* --- LOADING OVERLAY --- */
-
-        #loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        .loader-bar {
-            width: 300px;
-            height: 4px;
-            background: var(--secondary);
-            margin-top: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .loader-progress {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 0%;
-            background: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
-            animation: loadProgress 2s ease-in-out forwards;
-        }
-
-        @keyframes loadProgress {
-            0% {
-                width: 0%;
-            }
-            100% {
-                width: 100%;
-            }
-        }
-
-        /* --- BUTTONS --- */
-
-        .cyber-btn {
-            background: var(--primary);
-            color: black;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-            transition: 0.3s;
-            cursor: pointer;
-            border: none;
-        }
-
-        .cyber-btn:hover {
-            background: white;
-            box-shadow: 0 0 25px var(--primary);
-        }
-
-        .cyber-btn-outline {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .cyber-btn-outline:hover {
-            background: rgba(153, 51, 255, 0.1);
-            color: white;
-            box-shadow: 0 0 15px var(--primary);
-        }
-
-        /* --- TERMINAL --- */
-
-        .terminal-window {
-            background: rgba(5, 0, 10, 0.95);
-            border: 1px solid var(--secondary);
-            height: 200px;
-            overflow-y: hidden;
-            border-left: 3px solid var(--primary);
-        }
-
-        .glitch-load {
-            animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-        }
-
-        @keyframes glitch-skew {
-            0% {
-                transform: translate(0)
-            }
-            20% {
-                transform: translate(-2px, 2px)
-            }
-            40% {
-                transform: translate(-2px, -2px)
-            }
-            60% {
-                transform: translate(2px, 2px)
-            }
-            80% {
-                transform: translate(2px, -2px)
-            }
-            100% {
-                transform: translate(0)
-            }
-        }
-
+        /* --- COMPONENTS --- */
         .cyber-card {
-            background: var(--glass);
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 30px rgba(153, 51, 255, 0.2), inset 0 0 20px rgba(153, 51, 255, 0.1);
-            backdrop-filter: blur(10px);
-            position: relative;
-            clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%, 0 15%);
+            background: #000000; border: 1px solid #333;
+            box-shadow: 4px 4px 0px #222; transition: all 0.2s ease;
+            position: relative; overflow: hidden;
         }
+        .cyber-card:hover { transform: translate(-1px, -1px); border-color: #fff; box-shadow: 6px 6px 0px #fff; }
+        
+        .cyber-btn {
+            background: #000; color: #fff; border: 1px solid #fff;
+            text-transform: uppercase; font-family: 'Share Tech Mono', monospace;
+            font-weight: bold; cursor: pointer; transition: all 0.2s;
+            box-shadow: 2px 2px 0px #666; position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .cyber-btn:hover { background: #fff; color: #000; box-shadow: 4px 4px 0px #999; }
+        .cyber-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0px #333; }
+        
+        .bg-retro-panel {
+            background-color: #080808;
+            background-image: linear-gradient(#1a1a1a 1px, transparent 1px), linear-gradient(90deg, #1a1a1a 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .animate-text-flicker { animation: textFlicker 3s infinite; }
+        @keyframes textFlicker { 0%, 100% { opacity: 1; } 96% { opacity: 0.4; } 98% { opacity: 0.2; } }
+
+        /* --- LOADERS (MONOCHROME) --- */
+        .loader-overlay { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; color: white; }
+        
+        /* VCR (Dark Grey/Black) */
+        .vcr-screen {
+            background-color: #080808; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            position: relative; animation: vcrFlicker 0.1s infinite;
+        }
+        .vcr-play { font-size: 4rem; text-shadow: 2px 2px 0px #fff; animation: blink 1s steps(2, start) infinite; }
+        .vcr-tracking {
+            position: absolute; width: 100%; height: 100%;
+            background: repeating-linear-gradient(transparent 0px, transparent 2px, rgba(255,255,255,0.05) 3px);
+            animation: scrollDown 4s linear infinite; pointer-events: none;
+        }
+
+        /* Bio Scan (White) */
+        .bio-scan-container {
+            background: #000; width: 100%; height: 100%; position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .bio-grid {
+            position: absolute; inset: 0;
+            background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px);
+            background-size: 40px 40px; opacity: 0.5;
+        }
+        .bio-beam {
+            position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+            background: #fff; box-shadow: 0 0 20px #fff;
+            animation: bioScanMove 1.5s ease-in-out infinite alternate; z-index: 10;
+        }
+        .bio-text {
+            color: #fff; border: 2px solid #fff; padding: 20px;
+            background: rgba(0,0,0, 0.9); font-family: 'Orbitron', sans-serif;
+            text-align: center; z-index: 20; box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+
+        /* Signal (White Noise) */
+        .signal-container {
+            background: #050505; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
+        }
+        .signal-wave {
+            width: 200vw; height: 200vh;
+            background: repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 20px, rgba(255,255,255,0.1) 21px, rgba(255,255,255,0.02) 40px);
+            position: absolute; animation: signalExpand 2s linear infinite;
+        }
+        .signal-text {
+            font-size: 2rem; z-index: 10; background: #000; padding: 10px 30px; border-left: 5px solid white;
+            animation: signalShake 0.2s infinite;
+        }
+
+        /* Data (White/Grey) */
+        .data-melt-container {
+            background: #000; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center; flex-direction: column; position: relative; overflow: hidden;
+        }
+        .data-column {
+            font-family: 'Share Tech Mono', monospace; font-size: 12px; color: #888;
+            writing-mode: vertical-rl; text-orientation: upright;
+            animation: dataFall 0.5s linear infinite; opacity: 0.7; position: absolute; top: -20px;
+        }
+        
+        /* Animations */
+        @keyframes scrollDown { from { background-position: 0 0; } to { background-position: 0 100%; } }
+        @keyframes blink { to { visibility: hidden; } }
+        @keyframes bioScanMove { from { top: 0%; } to { top: 100%; } }
+        @keyframes signalExpand { from { transform: scale(0.5); opacity: 1; } to { transform: scale(1.5); opacity: 0; } }
+        @keyframes signalShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(2px); } 75% { transform: translateX(-2px); } }
+        @keyframes dataFall { from { transform: translateY(-20px); } to { transform: translateY(20px); } }
+        @keyframes crtOpen { 0% { transform: scaleY(0.005) scaleX(0); opacity: 0; } 50% { transform: scaleY(0.005) scaleX(1); opacity: 1; } 100% { transform: scaleY(1) scaleX(1); opacity: 1; } }
+        .animate-crt-open { animation: crtOpen 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards; transform-origin: center; }
+        
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(2px);
+            position: fixed; inset: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+            padding: 1rem;
+        }
+        .animate-terminal-drop { animation: terminalDrop 0.5s forwards; }
+        @keyframes terminalDrop { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "rxjs": "https://esm.sh/rxjs@^7.8.2?conditions=es2015",
-    "rxjs/operators": "https://esm.sh/rxjs@^7.8.2/operators?conditions=es2015",
-    "rxjs/ajax": "https://esm.sh/rxjs@^7.8.2/ajax?conditions=es2015",
-    "rxjs/webSocket": "https://esm.sh/rxjs@^7.8.2/webSocket?conditions=es2015",
-    "rxjs/testing": "https://esm.sh/rxjs@^7.8.2/testing?conditions=es2015",
-    "rxjs/fetch": "https://esm.sh/rxjs@^7.8.2/fetch?conditions=es2015",
-    "@angular/core": "https://esm.sh/@angular/core@^21.0.6?external=rxjs",
-    "@angular/common": "https://esm.sh/@angular/common@^21.0.6?external=rxjs",
-    "@angular/forms": "https://esm.sh/@angular/forms@^21.0.6?external=rxjs",
-    "@angular/platform-browser": "https://esm.sh/@angular/platform-browser@^21.0.6?external=rxjs"
-  }
-}
-</script>
 </head>
-
 <body>
-    
-    <!-- Hidden File Input for Obfuscator -->
-    <input type="file" id="file-upload" hidden accept=".lua,.txt">
 
-    <audio id="background-music" loop>
+    <!-- VHS EFFECTS -->
+    <div id="vhs-effects">
+        <div class="vhs-overlay"></div>
+        <div class="scanline"></div>
+        <div class="noise"></div>
+    </div>
+
+    <!-- AUDIO -->
+    <audio id="bgMusic" loop>
         <source src="https://cs1.mp3.pm/download/187817521/QzBEZm41YzRMOG8zOTc0cFZqbTltYXJyWUNvNVhJbWhtS1ZXTGZYQUdUVHFxK1MyRWo3U2VQalpTWGFkVXlNaEhCQVQ3clhhV2JxLzJxY0xDY0VpSU1jS1I1ekFJQjY5RExqSGJ5dDdUaSs4aThhNitrUnVQRWR6ekFOZjNGYWM/The_Neighbourhood_-_Softcore_Slowed_(mp3.pm).mp3" type="audio/mpeg">
     </audio>
-    <!-- WELCOME SCREEN --> 
-    <div id="welcome-screen"> 
-        <div class="mb-6 relative text-center">
-            <div class="absolute inset-0 bg-purple-500 blur-[60px] opacity-20 animate-pulse"></div>
-            <h1 class="font-cyber text-5xl md:text-7xl text-white relative z-10" style="text-shadow: 0 0 20px var(--primary);">SPANEL</h1>
-        </div>
-        <div class="border-l-2 border-r-2 border-purple-600 bg-purple-900/10 p-6 md:p-10 max-w-lg w-[90%] backdrop-blur-md relative overflow-hidden group text-center">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent"></div>
-            <h2 class="text-xl font-mono text-purple-400 mb-4 tracking-widest">SYSTEM ACCESS REQUEST</h2>
-            <p class="text-gray-300 font-mono text-sm mb-6 leading-relaxed">
-                Authorized Personnel Only.<br> 
-                <span class="text-white font-bold">
-Version created by Mazikeen helper: DisabilityBG</span><br> 
-                Version: <span class="text-white">1.0 - By Maze</span>
-            </p>
-            <button onclick="enterSystem()" class="cyber-btn w-full py-4 text-xl font-bold tracking-widest hover:scale-105 transition-transform">
-                [ Crossing the line ]
-            </button>
-        </div>
-        <div class="mt-8 text-xs text-gray-600 font-mono">Don't copy us, I know we're the best.</div>
-    </div>
-    
-    <div class="grid-overlay"></div>
-    <canvas id="bg-canvas"></canvas>
 
-    <!-- TOAST NOTIFICATION -->
-    <div id="mobile-toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-purple-900/90 text-white px-4 py-2 text-xs font-mono border border-purple-500 rounded z-50 hidden">
-        MOBILE CLIENT DETECTED // UI ADAPTED
+    <!-- LOADER OVERLAY -->
+    <div id="loader-overlay" class="loader-overlay hidden">
+        <div id="loader-content" class="w-full h-full"></div>
     </div>
-    
-<!-- REAL USER COUNTER -->
-    </div>
-    <div class="font-mono text-[10px] text-gray-500">
-        TOTAL VISITS: <span id="total-visits" class="text-purple-400">...</span>
-    </div>
-</div>
 
-<div id="volume-control">
-    <i class="fas fa-volume-up"></i>
-</div>
-
-<div id="loading-overlay">
-    <div class="text-purple-500 font-mono text-xl tracking-widest glitch-load">
-        ESTABLISHING SECURE CONNECTION...
-    </div>
-    <div class="loader-bar">
-        <div class="loader-progress"></div>
-    </div>
-    <div class="text-gray-500 font-mono text-xs mt-2">
-        ENCRYPTING TRAFFIC :: BYPASSING FIREWALL
-    </div>
-</div>
-
-<div id="universal-modal" onclick="closeUniversalModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-close" onclick="closeUniversalModal()">
-            <i class="fas fa-times"></i>
-        </div>
-
-        <div class="flex items-start gap-6 h-full flex-col md:flex-row md:h-auto">
-            <div class="w-16 h-16 bg-purple-900/30 flex items-center justify-center border border-purple-500/50 hidden md:flex shrink-0">
-                <i id="u-modal-icon" class="fas fa-info-circle text-3xl text-purple-500"></i>
+    <!-- WELCOME SCREEN -->
+    <div id="welcome-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black text-white transition-opacity duration-1000">
+        <div class="relative z-10 text-center space-y-8 p-6 max-w-2xl w-full">
+            <div class="mb-4">
+                <h1 class="text-6xl md:text-8xl font-cyber font-black tracking-tighter retro-glow animate-text-flicker">SPANEL</h1>
+                <p class="text-xl font-mono tracking-[0.5em] text-gray-500 mt-2">MONO_CHROME // V.1.0</p>
             </div>
 
-            <div class="flex-1 w-full flex flex-col h-full">
-                <h2 id="u-modal-title" class="text-xl md:text-2xl font-cyber text-white mb-1 tracking-wider uppercase">
-                    TITLE
-                </h2>
-
-                <div class="text-xs font-mono text-purple-400 mb-4 tracking-widest uppercase">
-                    ID: <span id="u-modal-id">0x00</span>
-                </div>
-
-                <p id="u-modal-desc" class="text-gray-300 text-sm leading-relaxed mb-6 font-light">
-                    Description...
+            <div class="border-2 border-white p-8 bg-black relative overflow-hidden group hover:border-gray-400 transition-colors">
+                <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
+                <h2 class="text-xl font-mono mb-6 border-b border-gray-800 pb-2">SYSTEM ACCESS REQUEST</h2>
+                <p class="font-mono text-sm text-gray-400 mb-8 leading-relaxed">
+                    AUTHORIZED PERSONNEL ONLY.<br>
+                    <span class="text-white font-bold">Version created by Mazikeen helper: DisabilityBG</span><br>
+                    MAZE // BLACK_EDITION
                 </p>
+                <button onclick="app.enterSystem()" class="w-full cyber-btn py-4 text-xl tracking-widest">
+                    [ CROSSING THE LINE ]
+                </button>
+            </div>
+            <div class="text-[10px] font-mono text-gray-700 uppercase tracking-widest mt-12">
+                Don't copy us. We see you watching.
+            </div>
+        </div>
+        <div class="absolute inset-0 z-0 opacity-10 pointer-events-none" 
+             style="background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px); background-size: 30px 30px;">
+        </div>
+    </div>
 
-                <div id="u-modal-body" class="space-y-4 font-mono text-xs flex-grow overflow-y-auto"></div>
+    <!-- MAIN CONTENT -->
+    <div id="main-content" class="relative min-h-screen flex flex-col hidden">
+        <canvas id="bgCanvas" class="fixed inset-0 w-full h-full -z-10 opacity-20"></canvas>
 
-                <div class="mt-6 pt-4 border-t border-purple-900/30 flex justify-between items-center shrink-0">
-                    <span class="text-xs text-gray-500">SYSTEM: ONLINE</span>
-                    <button
-                        class="text-purple-500 border border-purple-500 px-3 py-1 hover:bg-purple-500 hover:text-black transition text-xs font-bold font-cyber"
-                        onclick="closeUniversalModal()">
-                        CLOSE TERMINAL
+        <!-- NAV -->
+        <nav class="border-b border-white/30 bg-black/95 p-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-4 z-20 backdrop-blur-md">
+            <div class="text-2xl font-cyber font-bold tracking-widest text-white flex items-center gap-2">
+                <i class="fas fa-ghost"></i> S<span class="text-gray-600">PANEL</span>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-4 font-mono text-xs md:text-sm">
+                <button onclick="app.openNavModal('modules')" class="hover:text-white text-gray-400 hover:bg-white/10 px-2 py-1 transition-all">[ MODULES ]</button>
+                <button onclick="app.openNavModal('docs')" class="hover:text-white text-gray-400 hover:bg-white/10 px-2 py-1 transition-all">[ MANUALS ]</button>
+                <button onclick="app.openNavModal('security')" class="hover:text-white text-gray-400 hover:bg-white/10 px-2 py-1 transition-all">[ THREATS ]</button>
+                <button onclick="app.toggleVhs()" class="cyber-btn border px-3 py-1 text-[10px] ml-2 tracking-widest">
+                    VHS: <span id="vhs-status">ON</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- HERO -->
+        <main class="flex-grow flex flex-col items-center justify-center p-6 text-center z-10 mt-8 md:mt-0">
+            <div class="mb-8 flex items-center gap-2 border border-gray-800 px-4 py-1 bg-black animate-pulse">
+                <span class="w-1.5 h-1.5 bg-white animate-pulse"></span>
+                <span class="font-mono text-[10px] text-gray-400 tracking-[0.2em] uppercase">Status: Undetected</span>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-cyber font-black mb-6 text-white tracking-tighter">
+                SPANEL<br><span class="text-gray-600 text-3xl md:text-5xl">INJECTOR // V2</span>
+            </h1>
+
+            <p class="max-w-2xl text-gray-400 mb-12 font-mono text-xs md:text-sm border-l-2 border-white pl-6 text-left bg-gradient-to-r from-white/5 to-transparent p-4 italic">
+                "I lowered the <span class="text-white font-bold not-italic">level</span> to meet you. Admins watch, legit players complain and still, you never <span class="text-white font-bold not-italic">caught up with</span> us."
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-3xl">
+                <button onclick="app.triggerInstaller()" class="cyber-btn py-4 flex items-center justify-center gap-2 group hover:scale-[1.02] transition-transform">
+                    <i class="fas fa-bolt group-hover:animate-pulse"></i> GET FILE
+                </button>
+                <button onclick="app.openDiscord()" class="cyber-btn bg-black text-white hover:bg-white hover:text-black py-4 flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
+                    <i class="fab fa-discord"></i> DISCORD
+                </button>
+                <button onclick="app.openLuaObfuscator()" class="cyber-btn bg-black border-gray-500 text-gray-400 hover:border-white hover:text-white py-4 flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
+                    <i class="fas fa-code"></i> LUA OBFUSCATOR
+                </button>
+            </div>
+            
+            <button onclick="app.openCreatorDiscord()" class="mt-8 w-full max-w-md border border-dotted border-gray-700 py-2 text-gray-600 hover:text-white hover:border-white hover:bg-white/5 transition font-mono text-[10px] tracking-[0.3em] uppercase">
+                Start Chat with Creator
+            </button>
+        </main>
+
+        <!-- FEATURES -->
+        <section class="max-w-7xl mx-auto w-full px-6 grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 z-10">
+            <div onclick="app.openYTPlayer()" class="cyber-card p-6 cursor-pointer group bg-retro-panel">
+                <div class="flex justify-between items-start mb-4">
+                     <div class="text-3xl text-gray-300 group-hover:text-white transition-colors"><i class="fab fa-youtube"></i></div>
+                     <div class="text-[10px] font-mono text-gray-600">MOD_01</div>
+                </div>
+                <h3 class="text-lg font-cyber font-bold mb-2 text-white group-hover:translate-x-1 transition-transform">YOUTUBE DECK</h3>
+                <p class="text-gray-500 font-mono text-xs leading-relaxed">Secure video stream container.</p>
+            </div>
+
+            <div onclick="app.openKeyboardModal()" class="cyber-card p-6 cursor-pointer group bg-retro-panel">
+                <div class="flex justify-between items-start mb-4">
+                     <div class="text-3xl text-gray-300 group-hover:text-white transition-colors"><i class="fas fa-keyboard"></i></div>
+                     <div class="text-[10px] font-mono text-gray-600">MOD_02</div>
+                </div>
+                <h3 class="text-lg font-cyber font-bold mb-2 text-white group-hover:translate-x-1 transition-transform">GUI TERMINAL</h3>
+                <p class="text-gray-500 font-mono text-xs leading-relaxed">Virtual input device.</p>
+            </div>
+
+            <div onclick="app.triggerFileUpload()" class="cyber-card p-6 cursor-pointer group bg-retro-panel">
+                <div class="flex justify-between items-start mb-4">
+                     <div class="text-3xl text-gray-300 group-hover:text-white transition-colors"><i class="fas fa-file-shield"></i></div>
+                     <div class="text-[10px] font-mono text-gray-600">MOD_03</div>
+                </div>
+                <h3 class="text-lg font-cyber font-bold mb-2 text-white group-hover:translate-x-1 transition-transform">FILE SHIFTER</h3>
+                <p class="text-gray-500 font-mono text-xs leading-relaxed">Ghost Protocol Byte-Shift.</p>
+            </div>
+        </section>
+
+        <footer class="text-center py-6 text-[10px] text-gray-700 font-mono border-t border-gray-900 z-10 bg-black">
+            SPANEL © 2025 | MAZIKEEN HELPER: DISABILITYBG
+        </footer>
+
+        <!-- WIDGETS -->
+        <div class="fixed bottom-4 left-4 z-50 bg-black border border-white p-2 font-mono text-[10px] hidden md:block shadow-[2px_2px_0px_#333]">
+            <div class="flex items-center gap-2 border-b border-gray-800 pb-1 mb-1">
+                <span class="w-1.5 h-1.5 bg-white animate-pulse"></span>
+                <span>NET_LIVE: <span id="live-visits" class="font-bold text-white">42</span></span>
+            </div>
+            <div class="text-gray-500">TOTAL: <span id="total-visits">14,205</span></div>
+        </div>
+
+        <div onclick="app.toggleMute()" class="fixed bottom-4 right-4 z-50 w-8 h-8 bg-black border border-white flex items-center justify-center cursor-pointer hover:bg-white hover:text-black transition shadow-[2px_2px_0px_#333]">
+            <i id="volume-icon" class="fas fa-volume-up text-xs"></i>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="modal-container" class="modal-backdrop hidden" onclick="app.closeModal()">
+        <div class="cyber-card w-full max-w-2xl bg-black border border-white p-0 relative flex flex-col max-h-[90vh] shadow-[0_0_50px_rgba(255,255,255,0.1)]" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div class="bg-white text-black p-3 flex justify-between items-center border-b border-gray-800">
+                <div class="font-cyber font-bold tracking-widest flex items-center gap-2 text-sm">
+                    <i id="modal-icon" class="fas"></i>
+                    <span id="modal-title">TITLE</span>
+                </div>
+                <button onclick="app.closeModal()" class="hover:bg-black hover:text-white px-2 font-bold transition-colors">X</button>
+            </div>
+            <!-- Content -->
+            <div class="p-6 overflow-y-auto flex-grow font-mono text-sm space-y-6 bg-black">
+                <div class="border-b border-dashed border-gray-800 pb-4 text-xs text-gray-500 flex justify-between">
+                    <span id="modal-id">ID: 0x00</span>
+                    <span id="modal-desc">Description</span>
+                </div>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INSTALLER OVERLAY -->
+    <div id="installer-overlay" class="fixed inset-0 z-[200] bg-black flex flex-col font-mono text-white hidden">
+        <div class="h-12 border-b border-gray-800 flex items-center justify-between px-6 bg-black">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-terminal text-white text-xs"></i>
+                <span class="tracking-widest font-bold text-xs text-gray-400">ROOT_ACCESS // INSTALLER</span>
+            </div>
+            <div class="flex gap-4 text-[10px]">
+                <button onclick="app.closeInstaller()" class="hover:text-white text-gray-500 hover:bg-white/10 px-3 py-1 transition">[ ABORT ]</button>
+            </div>
+        </div>
+        <div class="flex-grow flex items-center justify-center p-4">
+            <div class="w-full max-w-4xl border border-white bg-black p-1 grid grid-cols-1 md:grid-cols-2 gap-0 shadow-[0_0_100px_rgba(255,255,255,0.05)]">
+                <div class="p-8 border-r border-gray-800 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute inset-0 bg-white/5 pointer-events-none"></div>
+                    <div class="relative z-10">
+                        <div class="inline-block border border-white text-white px-2 py-0.5 text-[10px] mb-6 font-bold">SECURE_BOOT</div>
+                        <h1 class="text-4xl font-black mb-2 tracking-tighter text-white">SPANEL</h1>
+                        <h2 class="text-sm text-gray-500 mb-8 tracking-widest">INSTALLATION WIZARD</h2>
+                        <div class="space-y-4 text-xs text-gray-400 font-mono">
+                             <div class="flex items-center gap-3"><div class="w-2 h-2 bg-white"></div> <span>Initializing Aegis...</span></div>
+                             <div class="flex items-center gap-3"><div class="w-2 h-2 bg-white"></div> <span>Loading Ghost Protocol...</span></div>
+                             <div class="flex items-center gap-3"><div class="w-2 h-2 bg-gray-600"></div> <span>Verifying Hash...</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 flex flex-col bg-[#050505]">
+                    <div class="bg-black border border-gray-800 p-2 mb-4 text-[10px] text-gray-600 flex justify-between font-mono">
+                        <span>root@spanel:~# ./deploy_payload.sh</span>
+                        <span>BASH</span>
+                    </div>
+                    <div id="terminal-logs" class="flex-grow font-mono text-[11px] space-y-1 text-gray-400 overflow-hidden mb-6 h-48 border-l border-gray-800 pl-4"></div>
+                    <button id="dlBtn" onclick="app.executeDownload()" class="w-full bg-white text-black font-bold py-4 hover:bg-gray-200 transition text-xs tracking-[0.2em] relative overflow-hidden border border-white">
+                        <span class="relative z-10"><i class="fas fa-download mr-2"></i> INITIATE DEPLOYMENT</span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-    <div id="landing-view" class="relative z-10 flex flex-col min-h-screen transition-opacity duration-500">
-        <nav class="flex flex-col md:flex-row justify-between items-center p-4 md:p-6 md:px-12 border-b border-purple-900/30 bg-black/40 backdrop-blur-sm gap-4 md:gap-0">
-            <div class="text-2xl font-cyber font-bold tracking-widest text-white">
-                S<span class="text-purple-500">PANEL</span>
-            </div>
-            <div class="flex flex-wrap justify-center gap-4 md:gap-8 font-mono text-xs md:text-sm text-gray-300">
-                <span class="nav-link" onclick="openNavModal('modules')">CORE MODULES</span>
-                <span class="nav-link" onclick="openNavModal('docs')">MANUALS</span>
-                <span class="nav-link" onclick="openNavModal('security')">THREAT SCAN</span>
-            
-</span>
-                <span class="nav-link text-purple-500 font-bold hidden md:inline">Version created by Mazikeen x Nickel |</span>
-            </div>
-        </nav>
-
-        <main class="flex-grow flex flex-col items-center justify-center text-center px-4 mt-10 md:mt-0">
-            <div class="mb-4 flex items-center gap-3 animate-pulse">
-                <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
-                <span class="font-mono text-xs text-purple-400 tracking-[0.2em]">NETWORK STATUS: SECURE & STABLE</span>
-                <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
-            </div>
-            <h1 class="hero-title font-cyber mb-4">SPANEL<br>INJECTOR</h1>
-            <p class="max-w-2xl text-base md:text-xl text-gray-400 mb-10 font-light px-4">
-               I lowered the <span class="text-white font-bold">level</span> to meet you. Admins watch, legit players complain and still, you never <span class="text-white font-bold">caught up with</span> us.
-            </p>
-<div class="flex flex-col md:flex-row gap-6 w-full max-w-lg justify-center px-4">
-    <button onclick="triggerInstaller()" class="cyber-btn py-4 px-8 w-full text-lg md:text-xl shadow-lg shadow-purple-900/50">
-        <i class="fas fa-bolt mr-2"></i> GET FILE
-    </button>
-
-    <button id="discord-btn" onclick="openDiscord()" class="cyber-btn cyber-btn-outline py-4 px-8 w-full font-cyber clip-path-polygon">
-        <i class="fab fa-discord mr-2"></i> JOIN THE SERVER
-    </button>
-
-    <!-- NOVO BOTÃO: LUA OBFUSCATOR -->
-    <button onclick="openLuaObfuscator()"
-        class="cyber-btn cyber-btn-outline py-3 px-8 w-full font-cyber text-purple-400 border-purple-500 hover:text-white hover:bg-purple-500/10 transition">
-        <i class="fas fa-code mr-2"></i> LUA OBFUSCATOR
-    </button>
-</div>
-        </main>
-<!-- NOVO BOTÃO: LUA OBFUSCATOR -->
-<button
-    onclick="window.open('https://discord.com/users/123456789012345678', '_blank')"
-    class="mt-4 py-4 px-8 w-full flex items-center justify-center gap-3
-           bg-purple-950/30 backdrop-blur-sm border-2 border-purple-400/50 text-purple-200
-           font-cyber text-lg tracking-widest uppercase rounded-sm
-           hover:border-purple-400 hover:bg-purple-500/20 hover:scale-[1.02] hover:text-white
-           active:scale-95 transition-all duration-300
-           shadow-[inset_0_0_15px_rgba(168,85,247,0.2)]"
->
-    <i class="fab fa-discord text-2xl animate-bounce-subtle"></i>
-    <span class="drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]">Talk to Creator</span>
-</button>
-
-        <section class="max-w-7xl mx-auto w-full px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-6 pb-24 md:pb-16">
-            <!-- YOUTUBE PLAYER -->
-            <div class="feature-card p-6" onclick="openYTPlayer()">
-                <div class="feature-icon-box"><i class="fab fa-youtube text-2xl text-purple-500"></i></div>
-                <h3 class="text-xl font-cyber font-bold mb-2">YOUTUBE VIDEOS</h3>
-                <p class="text-gray-400 text-sm leading-relaxed">Watch any YouTube video securely inside the panel. Just paste your link and deploy the stream.</p>
-                <div class="mt-4 text-xs text-purple-500 font-mono tracking-wider">[ PLAY VIDEO ]</div>
-            </div>
-            
-            <!-- MODIFIED: GUI KEYBOARD -->
-            <div class="feature-card p-6" onclick="openKeyboardModal()">
-                <div class="feature-icon-box"><i class="fas fa-keyboard text-2xl text-purple-500"></i></div>
-                <h3 class="text-xl font-cyber font-bold mb-2">GUI KEYBOARD</h3>
-                <p class="text-gray-400 text-sm leading-relaxed">Access the virtual secure terminal keyboard. Input sensitive commands directly through the encrypted GUI layer.</p>
-                <div class="mt-4 text-xs text-purple-500 font-mono tracking-wider">[ OPEN GUI ]</div>
-            </div>
-
-            <!-- MODIFIED: FILE OBFUSCATOR -->
-            <div class="feature-card p-6" onclick="triggerFileUpload()">
-                <div class="feature-icon-box"><i class="fas fa-file-code text-2xl text-purple-500"></i></div>
-                <h3 class="text-xl font-cyber font-bold mb-2">FILE OBFUSCATOR</h3>
-                <p class="text-gray-400 text-sm leading-relaxed">Upload any .lua file to apply the Ghost Protocol Byte-Shift obfuscation. Output compatible with all major executors.</p>
-                <div class="mt-4 text-xs text-purple-500 font-mono tracking-wider">[ SELECT FILE ]</div>
-            </div>
-        </section>
-
-        <footer class="text-center py-6 text-xs text-gray-600 font-mono border-t border-purple-900/20 mb-16 md:mb-0">
-            SPanel © 2025 | Version created by Mazikeen helper:DisabilityBG
-        </footer>
-    </div>
-
-    <!-- INSTALLER UI -->
-    <div id="installer-view">
-        <div class="installer-nav">
-            <div class="flex items-center gap-2">
-                <i class="fas fa-terminal text-purple-500"></i>
-                <span class="font-cyber font-bold tracking-widest text-sm">S_PANEL // ROOT_ACCESS</span>
-            </div>
-            <div class="flex gap-2 md:gap-4">
-                <div class="installer-tab hover:text-white active" onclick="returnToHome()">
-                    <i class="fas fa-home"></i> EXIT
-                </div>
-                <div class="installer-tab" onclick="openNavModal('patches')"><i class="fas fa-code-branch"></i> UPDATES</div>
-                <div class="installer-tab" onclick="openNavModal('settings')"><i class="fas fa-cogs"></i> CONFIG</div>
-                <div class="installer-tab text-purple-500 border-purple-900"><i class="fas fa-power-off"></i> <span class="hidden md:inline">LOG OUT</span></div>
-            </div>
-        </div>
-
-        <div class="flex-grow flex items-center justify-center w-full">
-            <div class="cyber-card w-full max-w-4xl p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8 m-4 h-full md:h-auto overflow-y-auto">
-                <div class="flex flex-col justify-between space-y-6">
-                    <div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="inline-block w-3 h-3 bg-purple-600 rounded-full animate-ping"></span>
-                            <span class="text-xs uppercase tracking-widest text-purple-500">Threat Level: Nominal</span>
-                        </div>
-                        <h1 class="font-cyber font-black text-3xl md:text-5xl mb-2 text-white" style="text-shadow: 2px 2px var(--primary);">SPANEL</h1>
-                        <h2 class="text-lg md:text-xl text-purple-400 font-bold mb-4 tracking-wider">New Version created by Mazikeen helper:DisabilityBG </h2>
-                        <p class="text-sm text-gray-400 mb-6 border-l border-purple-900 pl-4 font-mono">
-                           Secure link confirmed. Awaiting payload deployment...
-                        </p>
-                    </div>
-                    <div class="space-y-4 font-mono text-sm">
-                        <div class="flex items-center gap-3 text-gray-300"><i class="fas fa-check text-purple-500"></i> <span>Aegis Sentinel: Engaged</span></div>
-                        <div class="flex items-center gap-3 text-gray-300"><i class="fas fa-check text-purple-500"></i> <span>Synapse Injector: Primed</span></div>
-                        <div class="flex items-center gap-3 text-gray-300"><i class="fas fa-check text-purple-500"></i> <span>Ghost Protocol: Online</span></div>
-                    </div>
-                </div>
-                <div class="flex flex-col justify-end space-y-6">
-                    <div class="w-full">
-                        <div class="flex justify-between items-center bg-black px-3 py-1 border-b border-purple-900 text-xs text-purple-700 font-mono">
-                            <span>root@spanel:/#</span>
-                        </div>
-                        <div class="terminal-window p-4 font-mono text-purple-500 text-sm" id="terminal-content"></div>
-                    </div>
-                    <div class="text-center">
-                        <button id="finalDownloadBtn" onclick="executeDownload()" class="cyber-btn w-full py-4 text-xl group">
-                            <span class="group-hover:hidden"><i class="fas fa-link mr-2"></i> EXECUTE DEPLOYMENT</span>
-                            <span class="hidden group-hover:inline"><i class="fas fa-external-link-alt mr-2"></i> REDIRECTING...</span>
-                        </button>
-                        <div class="mt-2 text-xs text-gray-500 flex justify-between px-2 font-mono">
-                            <span>LINK: STABLE</span><span>ENCRYPTION: ON</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- FIREBASE & REALTIME LOGIC -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"; 
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"; 
-        import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"; 
-        
-        try {
-            const firebaseConfig = JSON.parse(__firebase_config); 
-            
-            const app = initializeApp(firebaseConfig); 
-            const auth = getAuth(app); 
-            const db = getFirestore(app); 
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; 
-            
-            async function initRealtimeStats() { 
-                try { 
-                    await signInAnonymously(auth); 
-                    const userId = auth.currentUser.uid; 
-                    const mySessionRef = doc(db, 'artifacts', appId, 'public', 'data', 'live_sessions', userId); 
-                    
-                    const sendHeartbeat = async () => { 
-                        await setDoc(mySessionRef, { 
-                            timestamp: Date.now(), 
-                            device: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop' 
-                        }); 
-                    }; 
-                    
-                    sendHeartbeat(); 
-                    setInterval(sendHeartbeat, 10000); 
-                    
-                    const sessionsRef = collection(db, 'artifacts', appId, 'public', 'data', 'live_sessions'); 
-                    onSnapshot(sessionsRef, (snapshot) => { 
-                        const now = Date.now(); 
-                        let activeCount = 0; 
-                        snapshot.forEach((doc) => { 
-                            const data = doc.data(); 
-                            if (now - data.timestamp < 20000) {
-                                activeCount++; 
-                            } else if (now - data.timestamp > 60000) {
-                                deleteDoc(doc.ref).catch(() => {}); 
-                            }
-                        }); 
-                        const liveCountEl = document.getElementById('live-count'); 
-                        if (liveCountEl) { 
-                            liveCountEl.innerText = activeCount; 
-                            liveCountEl.classList.add('text-neon'); 
-                            setTimeout(() => liveCountEl.classList.remove('text-neon'), 500); 
-                        } 
-                    }); 
-                } catch (error) { 
-                    console.error("FB Error:", error); 
-                } 
-            } 
-            
-            initRealtimeStats();
-        } catch(e) {
-            console.log("Firebase config not found or invalid. Skipping FB init.");
-        }
-    </script>
+    <!-- HIDDEN INPUT -->
+    <input type="file" id="fileInput" hidden accept=".lua,.txt">
 
     <script>
-        const DOWNLOAD_URL = "https://astriidybg.github.io/Spanel2/";
-        const DISCORD_URL = "https://discord.gg/MpcyR24e";
-        let terminalTimeout;
-
-        function enterSystem() {
-            const screen = document.getElementById('welcome-screen');
-            playUiSound();
-            screen.classList.add('hidden-screen');
+        const app = {
+            state: {
+                vhs: true,
+                muted: false,
+                keyboardBuffer: ''
+            },
             
-            const bgMusic = document.getElementById('background-music');
-            const volumeControl = document.getElementById('volume-control');
-            
-            bgMusic.volume = 0.4;
-            bgMusic.play().catch(error => console.error("Audio autoplay was prevented.", error));
-            
-            volumeControl.classList.add('visible');
-        }
+            // --- CONSTANTS ---
+            DOWNLOAD_URL: "https://astriidybg.github.io/Spanel2/",
+            DISCORD_URL: "https://discord.gg/MpcyR24e",
+            CREATOR_DISCORD_ID: "123456789012345678",
 
-        function checkMobile() {
-            if (window.innerWidth <= 768) {
-                const toast = document.getElementById('mobile-toast');
-                toast.classList.remove('hidden');
-                setTimeout(() => {
-                    toast.classList.add('hidden');
-                }, 4000);
-            }
-        }
-        window.addEventListener('load', checkMobile);
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            const volumeControl = document.getElementById('volume-control');
-            const bgMusic = document.getElementById('background-music');
-            const icon = volumeControl.querySelector('i');
+            // --- INIT ---
+            init: function() {
+                this.initVisits();
+                this.initCanvas();
+                this.setupAudio();
+                
+                document.getElementById('fileInput').addEventListener('change', (e) => this.handleFileSelect(e));
+            },
 
-            // Setup File Input Listener
-            const fileInput = document.getElementById('file-upload');
-            fileInput.addEventListener('change', handleFileSelect, false);
+            // --- AUDIO ---
+            audioCtx: null,
+            setupAudio: function() {
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.audioCtx = new AudioContext();
+                } catch(e) {}
+            },
+            playUiSound: function(freq = 800, type = 'sine') {
+                if(!this.audioCtx) this.setupAudio();
+                if(!this.audioCtx) return;
+                if(this.audioCtx.state === 'suspended') this.audioCtx.resume();
 
-            volumeControl.addEventListener('click', () => {
-                bgMusic.muted = !bgMusic.muted;
-                if (bgMusic.muted) {
-                    icon.className = 'fas fa-volume-mute';
-                } else {
-                    icon.className = 'fas fa-volume-up';
-                }
-            });
-        });
+                const osc = this.audioCtx.createOscillator();
+                const gain = this.audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(freq/2, this.audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.05, this.audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                osc.start();
+                osc.stop(this.audioCtx.currentTime + 0.1);
+            },
+            toggleMute: function() {
+                this.state.muted = !this.state.muted;
+                const audio = document.getElementById('bgMusic');
+                audio.muted = this.state.muted;
+                const icon = document.getElementById('volume-icon');
+                icon.className = this.state.muted ? 'fas fa-volume-mute text-xs' : 'fas fa-volume-up text-xs';
+                this.playUiSound();
+            },
 
+            // --- THEME ---
+            toggleVhs: function() {
+                this.state.vhs = !this.state.vhs;
+                document.getElementById('vhs-effects').classList.toggle('hidden', !this.state.vhs);
+                document.getElementById('vhs-status').innerText = this.state.vhs ? 'ON' : 'OFF';
+                this.playUiSound();
+            },
 
-        function initTotalVisits() {
-            let visits = localStorage.getItem('spanel_total_visits');
-            if (!visits) visits = 14205;
-            else visits = parseInt(visits) + 1;
-            localStorage.setItem('spanel_total_visits', visits);
-            document.getElementById('total-visits').innerText = visits.toLocaleString();
-        }
-        window.addEventListener('load', initTotalVisits);
+            // --- NAVIGATION / LOADING ---
+            enterSystem: async function() {
+                this.playUiSound();
+                await this.startLoading('glitch', 'BREACHING FIREWALL...', 1500);
+                
+                document.getElementById('welcome-screen').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                document.getElementById('main-content').classList.add('animate-crt-open');
 
-        const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                const audio = document.getElementById('bgMusic');
+                audio.volume = 0.4;
+                audio.play().catch(e => console.log('Audio blocked', e));
+            },
 
-        function playUiSound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.1);
-        }
-
-        function playBeep() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.type = 'square';
-            oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.05);
-            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.05);
-        }
-
-        document.addEventListener('click', function(e) {
-            const target = e.target.closest('button, a, .cyber-btn, .nav-link, .feature-card, .installer-tab, .playlist-item, .music-btn, .fa-times, .fa-chevron-down, .fa-chevron-up, input[type="range"], .modal-close');
-            if (target) {
-                playUiSound();
-            }
-        });
-
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height, animationMode = 'particles';
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            if(animationMode === 'matrix'){
-                 initMatrix();
-            }
-        }
-        window.addEventListener('resize', resize);
-        
-        const particles = [];
-        resize(); 
-        for (let i = 0; i < 60; i++) particles.push({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            vx: (Math.random() - 0.5),
-            vy: (Math.random() - 0.5),
-            size: Math.random() * 2 + 1,
-            alpha: Math.random() * 0.5 + 0.1
-        });
-        
-        const katakana = '010101SPANEL';
-        const fontSize = 14;
-        let columns;
-        const drops = [];
-
-        function initMatrix() {
-            columns = Math.floor(width / fontSize);
-            for (let x = 0; x < columns; x++) drops[x] = 1;
-        }
-
-        function animate() {
-            if (animationMode === 'particles') {
-                ctx.clearRect(0, 0, width, height);
-                particles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    if (p.x < 0 || p.x > width) p.x = Math.random() * width;
-                    if (p.y < 0 || p.y > height) p.y = Math.random() * height;
+            startLoading: function(type, msg, duration = 1500) {
+                return new Promise(resolve => {
+                    const overlay = document.getElementById('loader-overlay');
+                    const content = document.getElementById('loader-content');
+                    overlay.classList.remove('hidden');
                     
-                    ctx.fillStyle = `rgba(153, 51, 255, ${p.alpha})`;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    ctx.fill();
+                    let html = '';
+                    // Generate HTML based on monochrome design
+                    if(type === 'vcr') {
+                        html = `
+                            <div class="vcr-screen">
+                                <div class="vcr-tracking"></div>
+                                <div class="absolute top-8 left-8 text-xl font-mono">AV-1</div>
+                                <div class="vcr-play font-cyber">PLAY ►</div>
+                                <div class="absolute bottom-8 right-8 text-xl font-mono">SP 0:00:01</div>
+                                <div class="mt-8 text-sm opacity-70 animate-pulse font-mono">${msg}</div>
+                            </div>`;
+                    } else if (type === 'bio') {
+                        html = `
+                            <div class="bio-scan-container">
+                                <div class="bio-grid"></div>
+                                <div class="bio-beam"></div>
+                                <div class="bio-text">
+                                    <div class="text-4xl mb-2"><i class="fas fa-biohazard fa-spin"></i></div>
+                                    <div class="text-xl tracking-widest font-cyber">SECURITY SCAN</div>
+                                    <div class="text-xs mt-2 font-mono uppercase">${msg}</div>
+                                </div>
+                            </div>`;
+                    } else if (type === 'signal') {
+                        html = `
+                             <div class="signal-container">
+                                <div class="signal-wave"></div>
+                                <div class="signal-wave" style="animation-delay: 0.5s"></div>
+                                <div class="signal-text border-2 border-white">
+                                    <i class="fas fa-satellite-dish mr-2"></i> SIGNAL FOUND
+                                </div>
+                                <div class="mt-4 font-mono text-xs text-black bg-white px-2 py-1 font-bold">${msg}</div>
+                            </div>`;
+                    } else if (type === 'data') {
+                        let cols = '';
+                        for(let i=0; i<10; i++) cols += `<div class="data-column" style="left:${i*10}%; animation-duration:${0.3 + i*0.1}s">101010101010</div>`;
+                        html = `
+                            <div class="data-melt-container">
+                                ${cols}
+                                <div class="bg-black text-white p-6 border border-white z-10 text-center">
+                                    <div class="text-2xl font-bold mb-1 font-cyber">COMPILING...</div>
+                                    <div class="text-[10px] font-mono text-gray-400">${msg}</div>
+                                </div>
+                            </div>`;
+                    } else {
+                        // Glitch
+                         html = `
+                            <div class="flex flex-col items-center justify-center h-full relative">
+                                <h1 class="text-6xl text-white font-black font-cyber animate-pulse">${msg}</h1>
+                                <div class="mt-4 text-center font-mono text-white font-bold tracking-widest text-sm animate-pulse border border-white px-2">ACCESS GRANTED</div>
+                            </div>`;
+                    }
+
+                    content.innerHTML = html;
+                    this.playUiSound();
+
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                        content.innerHTML = '';
+                        resolve();
+                    }, duration);
                 });
-                ctx.strokeStyle = `rgba(153, 51, 255, 0.05)`;
-                ctx.beginPath();
-                particles.forEach((p, i) => {
-                    particles.slice(i + 1).forEach(p2 => {
-                        const d = Math.hypot(p.x - p2.x, p.y - p2.y);
-                        if (d < 100) {
-                            ctx.moveTo(p.x, p.y);
-                            ctx.lineTo(p2.x, p2.y);
-                        }
+            },
+
+            // --- MODALS ---
+            closeModal: function() {
+                this.playUiSound();
+                document.getElementById('modal-container').classList.add('hidden');
+            },
+
+            openNavModal: async function(key) {
+                await this.startLoading('glitch', 'FETCHING DATA...', 800);
+                const data = {
+                    modules: { title: "CORE MODULES", id: "0xMOD-LIST", desc: "Active kernel modules", icon: "fa-cubes", content: [{name: "CORE_KERNEL", tag: "RUNNING"}, {name: "LUA_BRIDGE", tag: "ACTIVE"}] },
+                    docs: { title: "MANUALS", id: "0xDOC-V2", desc: "Technical reference", icon: "fa-book", content: [{name: "API Reference v2.5", tag: "PDF"}] },
+                    security: { title: "THREAT SCAN", id: "0xSEC-CHK", desc: "Security analysis", icon: "fa-lock", content: [{name: "VAC Status", tag: "UNDETECTED"}] }
+                };
+                
+                if(data[key]) {
+                    let html = '';
+                    data[key].content.forEach(item => {
+                        html += `
+                        <div class="flex justify-between items-center border-b border-gray-900 py-3 hover:bg-white/5 px-2 transition">
+                           <span class="text-gray-300">${item.name}</span>
+                           <span class="bg-white text-black font-bold text-[10px] px-2 py-0.5">${item.tag}</span>
+                       </div>`;
                     });
+                    this.showModal(data[key].title, data[key].id, data[key].desc, data[key].icon, html);
+                }
+            },
+
+            openKeyboardModal: async function() {
+                await this.startLoading('bio', 'INITIALIZING DRIVER...', 1500);
+                this.state.keyboardBuffer = '';
+                
+                const rows = ["1234567890", "QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+                let keysHtml = '<div class="flex flex-col gap-2 select-none">';
+                rows.forEach(row => {
+                    keysHtml += '<div class="flex justify-center gap-1">';
+                    row.split('').forEach(char => {
+                        keysHtml += `<button onmousedown="app.typeKey('${char}')" class="bg-black border border-gray-600 text-gray-300 hover:border-white hover:text-white w-8 h-10 md:w-10 md:h-12 font-bold active:translate-y-0.5 transition-all">${char}</button>`;
+                    });
+                    keysHtml += '</div>';
                 });
-                ctx.stroke();
-            } else { // Matrix mode
-                ctx.fillStyle = 'rgba(10, 1, 15, 0.05)';
-                ctx.fillRect(0, 0, width, height);
-                ctx.fillStyle = 'var(--primary)';
-                ctx.font = fontSize + 'px monospace';
-                for (let i = 0; i < drops.length; i++) {
-                    ctx.fillText(katakana.charAt(Math.floor(Math.random() * katakana.length)), i * fontSize, drops[i] * fontSize);
-                    if (drops[i] * fontSize > height && Math.random() > 0.975) drops[i] = 0;
-                    drops[i]++;
+                keysHtml += '<div class="flex justify-center mt-2"><button onmousedown="app.typeKey(\' \')" class="bg-black border border-gray-600 text-gray-300 hover:border-white hover:text-white w-64 h-8 font-bold text-xs uppercase tracking-widest active:translate-y-0.5 transition-all">Spacebar</button></div></div>';
+                
+                const html = `
+                    <div id="kbd-display" class="bg-gray-900 border border-gray-700 p-4 min-h-[60px] mb-4 text-white whitespace-pre-wrap break-all shadow-inner font-bold text-lg tracking-wider">_</div>
+                    ${keysHtml}
+                    <div class="grid grid-cols-2 gap-4 mt-6">
+                        <button onclick="app.copyKeyboard()" class="cyber-btn py-3 text-xs">COPY SEQUENCE</button>
+                        <button onclick="app.clearKeyboard()" class="cyber-btn py-3 text-xs border-white text-white">CLEAR BUFFER</button>
+                    </div>
+                `;
+                
+                this.showModal('GUI KEYBOARD', '0xGUI-KBD', 'Virtual input device', 'fa-keyboard', html);
+            },
+
+            typeKey: function(char) {
+                this.playUiSound(1000, 'square');
+                this.state.keyboardBuffer += char;
+                document.getElementById('kbd-display').innerText = this.state.keyboardBuffer;
+            },
+            clearKeyboard: function() { this.state.keyboardBuffer = ''; document.getElementById('kbd-display').innerText = '_'; this.playUiSound(); },
+            copyKeyboard: function() { navigator.clipboard.writeText(this.state.keyboardBuffer); this.playUiSound(); },
+
+            openLuaObfuscator: async function() {
+                await this.startLoading('data', 'LOADING ENCRYPTION...', 1500);
+                const html = `
+                    <div class="relative">
+                        <textarea id="lua-input" placeholder="-- Paste Lua Code Here" class="w-full h-32 bg-gray-900/50 border border-gray-700 text-gray-300 p-3 text-xs outline-none focus:border-white transition-colors font-mono"></textarea>
+                        <div class="absolute top-0 right-0 p-1 text-[10px] text-gray-600">LUA 5.1</div>
+                    </div>
+                    <button onclick="app.doObfuscate()" class="w-full cyber-btn py-3 my-4">INITIATE OBFUSCATION</button>
+                    <div class="relative">
+                        <textarea id="lua-output" readonly placeholder="-- Output will appear here" class="w-full h-32 bg-black border border-gray-800 text-gray-400 p-3 text-xs outline-none resize-none font-mono"></textarea>
+                         <div class="absolute top-0 right-0 p-1 text-[10px] text-gray-600">READ ONLY</div>
+                    </div>
+                `;
+                this.showModal('LUA OBFUSCATOR', '0xLUA-ENC', 'Browser-side processing', 'fa-code', html);
+            },
+
+            doObfuscate: function() {
+                const input = document.getElementById('lua-input').value;
+                if(!input) return;
+                let decimalStr = "";
+                for (let i = 0; i < input.length; i++) decimalStr += "\\" + input.charCodeAt(i);
+                document.getElementById('lua-output').value = `loadstring("${decimalStr}")()`;
+                this.playUiSound(1200, 'square');
+            },
+
+            triggerFileUpload: function() { document.getElementById('fileInput').click(); },
+            handleFileSelect: async function(e) {
+                const file = e.target.files[0];
+                if(!file) return;
+                await this.startLoading('bio', 'ANALYZING STRUCTURE...', 2000);
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const content = ev.target.result;
+                    let decimalStr = "";
+                    for (let i = 0; i < content.length; i++) decimalStr += "\\" + content.charCodeAt(i);
+                    const result = `loadstring("${decimalStr}")()`;
+                    
+                    const html = `
+                        <textarea readonly class="w-full h-48 bg-black border border-gray-800 text-gray-400 p-3 text-xs outline-none resize-none font-mono">${result}</textarea>
+                        <button onclick="navigator.clipboard.writeText(document.querySelector('textarea').value)" class="w-full cyber-btn py-3 mt-6">COPY BYTECODE</button>
+                    `;
+                    this.showModal('FILE SHIFTER', '0xFILE-ENC', 'Ghost Protocol applied', 'fa-file-code', html);
+                };
+                reader.readAsText(file);
+                e.target.value = '';
+            },
+
+            openYTPlayer: async function() {
+                await this.startLoading('vcr', 'INSERTING TAPE...', 2000);
+                const html = `
+                    <div class="space-y-4">
+                        <div class="flex gap-2">
+                            <input id="yt-input" type="text" placeholder="Paste YouTube URL..." class="flex-grow bg-black border border-gray-700 py-2 px-3 text-white text-xs outline-none focus:border-white transition">
+                            <button onclick="app.loadYT()" class="cyber-btn px-4 text-xs">LOAD</button>
+                        </div>
+                        <div id="yt-frame" class="aspect-video w-full border border-gray-800 bg-black flex items-center justify-center text-gray-700 text-xs">[ NO SIGNAL ]</div>
+                    </div>
+                `;
+                this.showModal('YOUTUBE DECK', '0xYT-STREAM', 'Secure media container', 'fa-youtube', html);
+            },
+            
+            loadYT: function() {
+                const link = document.getElementById('yt-input').value;
+                const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+                const match = link.match(regExp);
+                if (match && match[7].length === 11) {
+                    const videoId = match[7];
+                    document.getElementById('yt-frame').innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1" class="w-full h-full" frameborder="0" allowfullscreen></iframe>`;
+                    this.playUiSound();
+                } else {
+                    alert('Invalid URL');
                 }
-            }
-            requestAnimationFrame(animate);
-        }
-        
-        animate(); 
+            },
 
-        function openDiscord() {
-            window.open(DISCORD_URL, '_blank');
-        }
+            showModal: function(title, id, desc, icon, contentHtml) {
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-id').innerText = "ID: " + id;
+                document.getElementById('modal-desc').innerText = desc;
+                document.getElementById('modal-icon').className = "fas " + icon;
+                document.getElementById('modal-body').innerHTML = contentHtml;
+                document.getElementById('modal-container').classList.remove('hidden');
+                this.playUiSound();
+            },
 
-        /* --- GUI KEYBOARD LOGIC --- */
-        let keyboardInput = "";
-        
-        function openKeyboardModal() {
-            document.getElementById('u-modal-title').innerText = 'GUI KEYBOARD';
-            document.getElementById('u-modal-id').innerText = '0xGUI-KBD';
-            document.getElementById('u-modal-desc').innerText = 'Secure virtual input terminal. Key strokes are encrypted.';
-            document.getElementById('u-modal-icon').className = 'fas fa-keyboard text-3xl text-purple-500';
-            
-            keyboardInput = "";
-            const body = document.getElementById('u-modal-body');
-            body.innerHTML = `
-                <div id="kbd-display" class="keyboard-display">_</div>
-                <div id="kbd-container"></div>
-                <div class="flex gap-2 mt-4">
-                     <button class="cyber-btn w-full py-2 text-xs" onclick="copyKeyboardInput()">COPY INPUT</button>
-                     <button class="cyber-btn w-full py-2 text-xs bg-red-600 hover:bg-red-500" onclick="clearKeyboard()">CLEAR</button>
-                </div>
-            `;
-            
-            generateKeyboard();
-            document.getElementById('universal-modal').classList.add('active');
-        }
+            // --- LINKS ---
+            openDiscord: async function() { await this.startLoading('signal', 'UPLINK ESTABLISHED', 1500); window.open(this.DISCORD_URL); },
+            openCreatorDiscord: async function() { await this.startLoading('signal', 'LOCATING ID...', 1500); window.open(`https://discord.com/users/${this.CREATOR_DISCORD_ID}`); },
 
-        function generateKeyboard() {
-            const rows = [
-                "1234567890",
-                "QWERTYUIOP",
-                "ASDFGHJKL",
-                "ZXCVBNM"
-            ];
-            
-            const container = document.getElementById('kbd-container');
-            
-            rows.forEach(rowString => {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'key-row';
+            // --- INSTALLER ---
+            triggerInstaller: async function() {
+                this.playUiSound();
+                await this.startLoading('bio', 'ROOT ACCESS...', 2000);
+                document.getElementById('main-content').classList.add('hidden');
+                document.getElementById('installer-overlay').classList.remove('hidden');
+                this.runTerminal();
+            },
+            closeInstaller: function() {
+                this.playUiSound();
+                document.getElementById('installer-overlay').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+            },
+            runTerminal: function() {
+                const container = document.getElementById('terminal-logs');
+                container.innerHTML = '';
+                const logs = [
+                    { text: "[BOOT] INITIALIZING VERIFICATION...", type: 'text-white' },
+                    { text: "[AUTH] CHECKING ADMIN PRIVILEGES...", type: 'text-gray-400' },
+                    { text: "[SEC] Aegis Sentinel Monitoring.", type: 'text-white' },
+                    { text: "[SCAN] User profile under analysis...", type: 'text-white' },
+                    { text: "[SYS] Permission matrix loaded.", type: 'font-bold text-white' },
+                    { text: "[NET] Identity validation in progress...", type: 'text-white' },
+                    { text: "[STATUS] No interference detected.", type: 'font-bold text-white' },
+                    { text: "[READY] Awaiting payload deployment...", type: 'font-bold text-white' }
+                ];
+                let i = 0;
+                const addLog = () => {
+                    if(i < logs.length) {
+                        const time = new Date().toLocaleTimeString('en-US', {hour12: false});
+                        const div = document.createElement('div');
+                        div.className = 'break-words';
+                        div.innerHTML = `<span class="text-gray-600">[${time}]</span> <span class="${logs[i].type}">${logs[i].text}</span>`;
+                        container.appendChild(div);
+                        this.playUiSound(1000, 'square');
+                        i++;
+                        setTimeout(addLog, 400);
+                    }
+                };
+                addLog();
+            },
+            executeDownload: function() {
+                this.playUiSound();
+                const btn = document.getElementById('dlBtn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> REDIRECTING...';
+                setTimeout(() => {
+                    window.open(this.DOWNLOAD_URL, '_blank');
+                    setTimeout(() => btn.innerHTML = '<i class="fas fa-download mr-2"></i> INITIATE DEPLOYMENT', 2000);
+                }, 1500);
+            },
+
+            // --- STATS / CANVAS ---
+            initVisits: function() {
+                let count = localStorage.getItem('spanel_visits') || 14205;
+                count++;
+                localStorage.setItem('spanel_visits', count);
+                document.getElementById('total-visits').innerText = parseInt(count).toLocaleString();
+                setInterval(() => {
+                    let val = parseInt(document.getElementById('live-visits').innerText);
+                    val += Math.floor(Math.random() * 3) - 1;
+                    if(val < 10) val = 10;
+                    document.getElementById('live-visits').innerText = val;
+                }, 5000);
+            },
+            initCanvas: function() {
+                const canvas = document.getElementById('bgCanvas');
+                const ctx = canvas.getContext('2d');
+                let w = canvas.width = window.innerWidth;
+                let h = canvas.height = window.innerHeight;
+                window.onresize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
                 
-                for(let char of rowString) {
-                    const btn = document.createElement('button');
-                    btn.className = 'cyber-key';
-                    btn.innerText = char;
-                    btn.onclick = () => typeKey(char);
-                    rowDiv.appendChild(btn);
-                }
-                container.appendChild(rowDiv);
-            });
-            
-            // Space Row
-            const spaceRow = document.createElement('div');
-            spaceRow.className = 'key-row';
-            const spaceBtn = document.createElement('button');
-            spaceBtn.className = 'cyber-key space-key';
-            spaceBtn.innerText = "SPACE";
-            spaceBtn.onclick = () => typeKey(" ");
-            spaceRow.appendChild(spaceBtn);
-            container.appendChild(spaceRow);
-        }
-
-        function typeKey(char) {
-            keyboardInput += char;
-            document.getElementById('kbd-display').innerText = keyboardInput + "_";
-            playBeep();
-        }
-
-        function clearKeyboard() {
-            keyboardInput = "";
-            document.getElementById('kbd-display').innerText = "_";
-            playUiSound();
-        }
-
-        function copyKeyboardInput() {
-            navigator.clipboard.writeText(keyboardInput).then(() => {
-                const display = document.getElementById('kbd-display');
-                const original = display.innerText;
-                display.innerText = "COPIED TO CLIPBOARD!";
-                setTimeout(() => display.innerText = original, 1000);
-            });
-        }
-
-        /* --- FILE OBFUSCATOR LOGIC --- */
-        
-        function triggerFileUpload() {
-            document.getElementById('file-upload').click();
-        }
-
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            // Show loading or processing state
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const content = e.target.result;
-                processFileObfuscation(content);
-            };
-            reader.readAsText(file);
-            
-            // Reset input so same file can be selected again
-            event.target.value = '';
-        }
-
-        function processFileObfuscation(content) {
-            // Apply Decimal ASCII Obfuscation: loadstring("\112...")()
-            let decimalStr = "";
-            for (let i = 0; i < content.length; i++) {
-                decimalStr += "\\" + content.charCodeAt(i);
-            }
-            
-            const result = `loadstring("${decimalStr}")()`;
-            
-            // Open Modal with Result
-            document.getElementById('u-modal-title').innerText = 'FILE OBFUSCATED';
-            document.getElementById('u-modal-id').innerText = '0xFILE-ENC';
-            document.getElementById('u-modal-desc').innerText = 'Ghost Protocol applied. Byte-Shift complete.';
-            document.getElementById('u-modal-icon').className = 'fas fa-file-code text-3xl text-purple-500';
-            
-            document.getElementById('u-modal-body').innerHTML = `
-                <textarea id="obf-result" 
-                    readonly 
-                    class="w-full h-48 bg-black/70 border border-purple-900 text-green-400 font-mono text-xs p-3 resize-none outline-none"
-                >${result}</textarea>
+                const parts = [];
+                for(let i=0; i<80; i++) parts.push({x:Math.random()*w, y:Math.random()*h, vx:(Math.random()-.5)*.5, vy:(Math.random()-.5)*.5, s:Math.random()*1.5+.5, a:Math.random()*.3+.05});
                 
-                <button onclick="copyObfuscatedResult()" class="cyber-btn w-full py-3 mt-4 text-sm">
-                    COPY OBFUSCATED CODE
-                </button>
-            `;
-            
-            document.getElementById('universal-modal').classList.add('active');
-        }
-
-        function copyObfuscatedResult() {
-            const textArea = document.getElementById('obf-result');
-            textArea.select();
-            document.execCommand('copy'); 
-            
-            const btn = document.querySelector('#u-modal-body button');
-            const originalText = btn.innerText;
-            btn.innerText = "COPIED!";
-            setTimeout(() => btn.innerText = originalText, 1500);
-        }
-
-        function openLuaObfuscator() {
-            document.getElementById('u-modal-title').innerText = 'LUA OBFUSCATOR';
-            document.getElementById('u-modal-id').innerText = '0xLUA-ENC';
-            document.getElementById('u-modal-desc').innerText =
-                'Cole seu codigo Lua abaixo. A ofuscacao acontece direto no navegador.';
-
-            document.getElementById('u-modal-icon').className = 'fas fa-code text-3xl text-purple-500';
-
-            const body = document.getElementById('u-modal-body');
-            body.innerHTML = `
-                <textarea id="lua-input"
-                    placeholder="-- Cole seu codigo Lua aqui"
-                    class="w-full h-40 bg-black/70 border border-purple-900 text-purple-300 font-mono text-xs p-3 resize-none outline-none focus:border-purple-500"></textarea>
-
-                <button onclick="obfuscateLua()"
-                    class="cyber-btn w-full py-3 mt-3 text-sm">
-                    OBFUSCAR
-                </button>
-
-                <textarea id="lua-output"
-                    placeholder="-- Codigo ofuscado aparece aqui"
-                    readonly
-                    class="w-full h-40 mt-3 bg-black/70 border border-purple-900 text-green-400 font-mono text-xs p-3 resize-none outline-none"></textarea>
-            `;
-
-            document.getElementById('universal-modal').classList.add('active');
-        }
-
-        function obfuscateLua() {
-            const src = document.getElementById("lua-input").value;
-            if (!src.trim()) return;
-
-            // Updated to use the requested simple decimal obfuscation logic
-            let decimalStr = "";
-            for (let i = 0; i < src.length; i++) {
-                decimalStr += "\\" + src.charCodeAt(i);
-            }
-            
-            const lua = `loadstring("${decimalStr}")()`;
-
-            document.getElementById("lua-output").value = lua;
-        }
-
-        function openYTPlayer() {
-            document.getElementById("u-modal-title").innerText = "YOUTUBE PLAYER";
-            document.getElementById("u-modal-id").innerText = "0xYT-STREAM";
-            document.getElementById("u-modal-desc").innerText = "Secure media stream channel. Input a YouTube URL below.";
-            
-            // Fix icon visibility if on mobile hidden
-            const iconEl = document.getElementById("u-modal-icon");
-            iconEl.className = "fab fa-youtube text-3xl text-purple-500";
-
-            document.getElementById("u-modal-body").innerHTML = `
-                <input 
-                    type="text"
-                    id="ytLink"
-                    placeholder="Paste YouTube Link Here..."
-                    class="w-full bg-purple-900/20 border border-purple-500/40 px-3 py-2 text-white outline-none font-mono focus:border-purple-500 transition"
-                >
-
-                <button 
-                    onclick="loadVideo()"
-                    class="w-full mt-3 py-2 bg-purple-600 hover:bg-purple-500 transition font-bold font-cyber tracking-widest text-black"
-                >
-                    LOAD VIDEO
-                </button>
-
-                <div id="yt-container" class="mt-4 aspect-video w-full hidden">
-                    <iframe
-                        id="ytFrame"
-                        class="w-full h-full border border-purple-500/30 rounded"
-                        src=""
-                        title="YouTube video player"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen
-                        referrerpolicy="strict-origin-when-cross-origin">
-                    </iframe>
-                </div>
-            `;
-
-            document.getElementById("universal-modal").classList.add("active");
-        }
-
-        function loadVideo() {
-            const link = document.getElementById('ytLink').value;
-            if (!link) return;
-            
-            let videoId = '';
-            // Robust regex for ID extraction supporting various formats (youtu.be, v/, embed, watch)
-            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-            const match = link.match(regExp);
-
-            if (match && match[7].length === 11) {
-                videoId = match[7];
-                // Added rel=0, modestbranding, and origin (if window.location.origin exists)
-                const origin = window.location.origin || '*';
-                const url = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&origin=${origin}`;
-                
-                const frame = document.getElementById('ytFrame');
-                frame.src = url;
-                document.getElementById('yt-container').classList.remove('hidden');
-            } else {
-                alert("Invalid YouTube URL");
-            }
-        }
-
-        const navData = {
-            modules: {
-                title: "CORE MODULES",
-                id: "0xMOD-LIST",
-                icon: "fa-cubes",
-                desc: "List of active kernel modules.",
-                content: [{
-                    name: "CORE_KERNEL",
-                    tag: "RUNNING"
-                }, {
-                    name: "LUA_BRIDGE",
-                    tag: "ACTIVE"
-                }]
-            },
-            docs: {
-                title: "DOCUMENTATION",
-                id: "0xDOC-V2",
-                icon: "fa-book",
-                desc: "Technical reference.",
-                content: [{
-                    name: "API Reference v2.5",
-                    tag: "PDF"
-                }]
-            },
-            security: {
-                title: "SECURITY STATUS",
-                id: "0xSEC-CHK",
-                icon: "fa-lock",
-                desc: "Security analysis.",
-                content: [{
-                    name: "VAC Status",
-                    tag: "UNDETECTED"
-                }]
-            },
-            patches: {
-                title: "SYSTEM PATCHES",
-                id: "0xPTCH-LOG",
-                icon: "fa-code-branch",
-                desc: "Recent kernel hotfixes.",
-                content: [{
-                    name: "v3.5.1 - MemLeak Fix",
-                    tag: "APPLIED"
-                }]
-            },
-            settings: {
-                title: "SYSTEM SETTINGS",
-                id: "0xCFG-USER",
-                icon: "fa-cogs",
-                desc: "Configure parameters.",
-                content: [{
-                    name: "Auto-Inject",
-                    tag: "ON"
-                }]
+                const anim = () => {
+                    ctx.clearRect(0,0,w,h);
+                    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                    parts.forEach(p => {
+                        p.x+=p.vx; p.y+=p.vy;
+                        if(p.x<0||p.x>w) p.x=Math.random()*w;
+                        if(p.y<0||p.y>h) p.y=Math.random()*h;
+                        ctx.globalAlpha=p.a; ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,Math.PI*2); ctx.fill();
+                    });
+                    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    for(let i=0; i<parts.length; i++) {
+                        for(let j=i+1; j<parts.length; j++) {
+                            const d = Math.hypot(parts[i].x-parts[j].x, parts[i].y-parts[j].y);
+                            if(d<80) { ctx.moveTo(parts[i].x, parts[i].y); ctx.lineTo(parts[j].x, parts[j].y); }
+                        }
+                    }
+                    ctx.stroke();
+                    requestAnimationFrame(anim);
+                };
+                anim();
             }
         };
 
-        function openModal(data, type) {
-            document.getElementById('u-modal-title').innerText = data.title;
-            document.getElementById('u-modal-id').innerText = data.id;
-            document.getElementById('u-modal-desc').innerText = data.desc;
-            document.getElementById('u-modal-icon').className = `fas ${data.icon} text-3xl text-purple-500`;
-            const body = document.getElementById('u-modal-body');
-            body.innerHTML = '';
-            if (type === 'list') {
-                data.content.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'modal-list-item';
-                    div.innerHTML = `<span class="text-gray-300">${item.name}</span><span class="modal-tag ${item.tag}">${item.tag}</span>`;
-                    body.appendChild(div);
-                });
-            } else {
-                data.stats.forEach(item => {
-                    const div = document.createElement('div');
-                    div.innerHTML = `<div class="flex justify-between text-gray-400 mb-1"><span>${item.name}</span><span class="text-white">${item.val}</span></div><div class="stat-bar"><div class="stat-fill" style="width: 100%"></div></div>`;
-                    body.appendChild(div);
-                });
-            }
-            document.getElementById('universal-modal').classList.add('active');
-        }
-
-        function openNavModal(key) {
-            openModal(navData[key], 'list');
-        }
-
-        function showFeature(key) {
-            openModal(featureData[key], 'stats');
-        }
-
-        function closeUniversalModal(e) {
-            if (e && e.target !== document.getElementById('universal-modal')) return;
-            document.getElementById('universal-modal').classList.remove('active');
-        }
-
-        function triggerInstaller() {
-            const landing = document.getElementById('landing-view');
-            const installer = document.getElementById('installer-view');
-            const loader = document.getElementById('loading-overlay');
-            landing.style.opacity = "0";
-            setTimeout(() => {
-                landing.style.display = "none";
-                loader.style.display = "flex";
-                initMatrix();
-                animationMode = 'matrix';
-                setTimeout(() => {
-                    loader.style.display = "none";
-                    installer.style.display = "flex";
-                    setTimeout(() => {
-                        installer.style.opacity = "1";
-                        startTerminal();
-                    }, 50);
-                }, 2000);
-            }, 500);
-        }
-
-        function returnToHome() {
-            if (terminalTimeout) clearTimeout(terminalTimeout);
-
-            const landing = document.getElementById('landing-view');
-            const installer = document.getElementById('installer-view');
-            installer.style.opacity = "0";
-            setTimeout(() => {
-                installer.style.display = "none";
-                landing.style.display = "flex";
-                animationMode = 'particles';
-                setTimeout(() => landing.style.opacity = "1", 50);
-            }, 500);
-        }
-
-        const terminalContent = document.getElementById('terminal-content');
-        const logs = [
-"[BOOT] INITIALIZING VERIFICATION...",
-"[AUTH] CHECKING ADMIN PRIVILEGES...",
-"[SEC] Aegis Sentinel Monitoring.",
-"[SCAN] User profile under analysis...",
-"[SYS] Permission matrix loaded.",
-"[NET] Identity validation in progress...",
-"[STATUS] No interference detected.",
-"[READY] Awaiting authorization..."
-        ];
-
-        function startTerminal() {
-            if (terminalTimeout) clearTimeout(terminalTimeout);
-            terminalContent.innerHTML = "";
-            let logIndex = 0;
-            let charIndex = 0;
-
-            function typeLog() {
-                if (logIndex < logs.length) {
-                    const currentLog = logs[logIndex];
-                    if (charIndex === 0) {
-                        const line = document.createElement('div');
-                        line.id = `log-${logIndex}`;
-                        line.className = 'mb-1';
-                        if (currentLog.includes("OK") || currentLog.includes("Active")) line.className += " text-purple-400";
-                        else if (currentLog.includes("[BOOT]")) line.className += " text-white";
-                        else if (currentLog.includes("[AUTH]")) line.className += " text-orange-500";
-                        terminalContent.appendChild(line);
-                    }
-                    if (charIndex < currentLog.length) {
-                        document.getElementById(`log-${logIndex}`).innerHTML = currentLog.substring(0, charIndex + 1) + '█';
-                        charIndex++;
-                        playBeep();
-                        terminalTimeout = setTimeout(typeLog, 30);
-                    } else {
-                        document.getElementById(`log-${logIndex}`).innerHTML = currentLog;
-                        charIndex = 0;
-                        logIndex++;
-                        terminalContent.scrollTop = terminalContent.scrollHeight;
-                        terminalTimeout = setTimeout(typeLog, 300);
-                    }
-                }
-            }
-            typeLog();
-        }
-
-        function executeDownload() {
-            const btn = document.getElementById('finalDownloadBtn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-cog fa-spin mr-2"></i> INITIATING REDIRECT...';
-            btn.style.color = '#fff';
-            btn.style.boxShadow = '0 0 30px var(--primary)';
-            setTimeout(() => {
-                window.open(DOWNLOAD_URL, '_blank');
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.style.color = '';
-                    btn.style.boxShadow = '';
-                }, 1000);
-            }, 800);
-        }
+        document.addEventListener('DOMContentLoaded', () => app.init());
     </script>
 </body>
-
 </html>
