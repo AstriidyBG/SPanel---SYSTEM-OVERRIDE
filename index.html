@@ -86,76 +86,27 @@
         .animate-text-flicker { animation: textFlicker 3s infinite; }
         @keyframes textFlicker { 0%, 100% { opacity: 1; } 96% { opacity: 0.4; } 98% { opacity: 0.2; } }
 
-        /* --- LOADERS (MONOCHROME) --- */
-        .loader-overlay { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; color: white; }
+        /* --- DYNAMIC LOADERS --- */
+        .loader-overlay { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden; }
         
-        /* VCR (Dark Grey/Black) */
-        .vcr-screen {
-            background-color: #080808; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            position: relative; animation: vcrFlicker 0.1s infinite;
+        /* Loader: Void Gate */
+        .void-gate {
+            perspective: 1000px; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle, #111 0%, #000 100%);
         }
-        .vcr-play { font-size: 4rem; text-shadow: 2px 2px 0px #fff; animation: blink 1s steps(2, start) infinite; }
-        .vcr-tracking {
-            position: absolute; width: 100%; height: 100%;
-            background: repeating-linear-gradient(transparent 0px, transparent 2px, rgba(255,255,255,0.05) 3px);
-            animation: scrollDown 4s linear infinite; pointer-events: none;
+        .void-tunnel {
+            position: absolute; width: 200%; height: 200%;
+            background: repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 100px),
+                        repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 100px);
+            transform-style: preserve-3d;
+            animation: moveTunnel 2s linear infinite;
         }
+        @keyframes moveTunnel { from { transform: rotateX(70deg) translateY(0%); } to { transform: rotateX(70deg) translateY(15%); } }
 
-        /* Bio Scan (White) */
-        .bio-scan-container {
-            background: #000; width: 100%; height: 100%; position: relative;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .bio-grid {
-            position: absolute; inset: 0;
-            background-image: linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px);
-            background-size: 40px 40px; opacity: 0.5;
-        }
-        .bio-beam {
-            position: absolute; top: 0; left: 0; width: 100%; height: 5px;
-            background: #fff; box-shadow: 0 0 20px #fff;
-            animation: bioScanMove 1.5s ease-in-out infinite alternate; z-index: 10;
-        }
-        .bio-text {
-            color: #fff; border: 2px solid #fff; padding: 20px;
-            background: rgba(0,0,0, 0.9); font-family: 'Orbitron', sans-serif;
-            text-align: center; z-index: 20; box-shadow: 0 0 15px rgba(255,255,255,0.3);
-        }
-
-        /* Signal (White Noise) */
-        .signal-container {
-            background: #050505; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
-        }
-        .signal-wave {
-            width: 200vw; height: 200vh;
-            background: repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 20px, rgba(255,255,255,0.1) 21px, rgba(255,255,255,0.02) 40px);
-            position: absolute; animation: signalExpand 2s linear infinite;
-        }
-        .signal-text {
-            font-size: 2rem; z-index: 10; background: #000; padding: 10px 30px; border-left: 5px solid white;
-            animation: signalShake 0.2s infinite;
-        }
-
-        /* Data (White/Grey) */
-        .data-melt-container {
-            background: #000; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center; flex-direction: column; position: relative; overflow: hidden;
-        }
-        .data-column {
-            font-family: 'Share Tech Mono', monospace; font-size: 12px; color: #888;
-            writing-mode: vertical-rl; text-orientation: upright;
-            animation: dataFall 0.5s linear infinite; opacity: 0.7; position: absolute; top: -20px;
-        }
+        /* Music Player Animation */
+        .visualizer-bar { animation: bounce 0.5s infinite ease-in-out alternate; background: #fff; width: 4px; }
+        @keyframes bounce { 0% { height: 10%; } 100% { height: 100%; } }
         
-        /* Animations */
-        @keyframes scrollDown { from { background-position: 0 0; } to { background-position: 0 100%; } }
-        @keyframes blink { to { visibility: hidden; } }
-        @keyframes bioScanMove { from { top: 0%; } to { top: 100%; } }
-        @keyframes signalExpand { from { transform: scale(0.5); opacity: 1; } to { transform: scale(1.5); opacity: 0; } }
-        @keyframes signalShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(2px); } 75% { transform: translateX(-2px); } }
-        @keyframes dataFall { from { transform: translateY(-20px); } to { transform: translateY(20px); } }
         @keyframes crtOpen { 0% { transform: scaleY(0.005) scaleX(0); opacity: 0; } 50% { transform: scaleY(0.005) scaleX(1); opacity: 1; } 100% { transform: scaleY(1) scaleX(1); opacity: 1; } }
         .animate-crt-open { animation: crtOpen 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards; transform-origin: center; }
         
@@ -166,8 +117,6 @@
             display: flex; align-items: center; justify-content: center;
             padding: 1rem;
         }
-        .animate-terminal-drop { animation: terminalDrop 0.5s forwards; }
-        @keyframes terminalDrop { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -179,14 +128,12 @@
         <div class="noise"></div>
     </div>
 
-    <!-- AUDIO -->
-    <audio id="bgMusic" loop>
-        <source src="https://cs1.mp3.pm/download/187817521/QzBEZm41YzRMOG8zOTc0cFZqbTltYXJyWUNvNVhJbWhtS1ZXTGZYQUdUVHFxK1MyRWo3U2VQalpTWGFkVXlNaEhCQVQ3clhhV2JxLzJxY0xDY0VpSU1jS1I1ekFJQjY5RExqSGJ5dDdUaSs4aThhNitrUnVQRWR6ekFOZjNGYWM/The_Neighbourhood_-_Softcore_Slowed_(mp3.pm).mp3" type="audio/mpeg">
-    </audio>
+    <!-- AUDIO ELEMENT (Controlled via JS now) -->
+    <audio id="audio-player" crossorigin="anonymous" loop></audio>
 
     <!-- LOADER OVERLAY -->
     <div id="loader-overlay" class="loader-overlay hidden">
-        <div id="loader-content" class="w-full h-full"></div>
+        <div id="loader-content" class="w-full h-full relative"></div>
     </div>
 
     <!-- WELCOME SCREEN -->
@@ -194,7 +141,7 @@
         <div class="relative z-10 text-center space-y-8 p-6 max-w-2xl w-full">
             <div class="mb-4">
                 <h1 class="text-6xl md:text-8xl font-cyber font-black tracking-tighter retro-glow animate-text-flicker">SPANEL</h1>
-                <p class="text-xl font-mono tracking-[0.5em] text-gray-500 mt-2">MONO_CHROME // V.1.0</p>
+                <p class="text-xl font-mono tracking-[0.5em] text-gray-500 mt-2">MONO_CHROME // V.2.0</p>
             </div>
 
             <div class="border-2 border-white p-8 bg-black relative overflow-hidden group hover:border-gray-400 transition-colors">
@@ -202,10 +149,10 @@
                 <h2 class="text-xl font-mono mb-6 border-b border-gray-800 pb-2">SYSTEM ACCESS REQUEST</h2>
                 <p class="font-mono text-sm text-gray-400 mb-8 leading-relaxed">
                     AUTHORIZED PERSONNEL ONLY.<br>
-                    <span class="text-white font-bold">Version created by Mazikeen helper: DisabilityBG</span><br>
+                    <span class="text-white font-bold">ARCHITECT: MAZE</span><br>
                     MAZE // BLACK_EDITION
                 </p>
-                <button onclick="app.enterSystem()" class="w-full cyber-btn py-4 text-xl tracking-widest">
+                <button onmouseover="app.scrambleText(this, '[ CROSSING THE LINE ]')" onclick="app.enterSystem()" class="w-full cyber-btn py-4 text-xl tracking-widest">
                     [ CROSSING THE LINE ]
                 </button>
             </div>
@@ -215,6 +162,42 @@
         </div>
         <div class="absolute inset-0 z-0 opacity-10 pointer-events-none" 
              style="background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px); background-size: 30px 30px;">
+        </div>
+    </div>
+
+    <!-- UPDATE / INTRO MODAL -->
+    <div id="intro-modal" class="fixed inset-0 z-[60] bg-black hidden flex items-center justify-center p-4">
+        <div class="w-full max-w-lg border border-white bg-black p-6 relative shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+            <div class="border-b border-dashed border-white pb-4 mb-4 flex justify-between items-end">
+                <h2 class="text-2xl font-cyber font-bold">SYSTEM PATCH_NOTE</h2>
+                <span class="text-xs font-mono bg-white text-black px-1">URGENT READ</span>
+            </div>
+            
+            <div class="space-y-6 font-mono text-sm text-gray-300">
+                <div class="border-l-2 border-white pl-4 py-2 bg-white/5">
+                    <p class="text-xs text-gray-500 mb-1">CREDITS_MANIFEST</p>
+                    <p class="text-white text-lg font-bold tracking-widest uppercase animate-pulse">ARCHITECT: MAZE</p>
+                    <p class="text-xs mt-1">CORE LOGIC & STRUCTURE DESIGNED BY MAZE.</p>
+                </div>
+
+                <div>
+                    <p class="text-white border-b border-gray-800 mb-2">CHANGELOG V2.1:</p>
+                    <ul class="list-disc pl-5 space-y-1 text-xs text-gray-400">
+                        <li>Implemented Ghost Protocol packet shifting.</li>
+                        <li>Patched memory leak in Lua Obfuscator.</li>
+                        <li><strong>New Feature:</strong>Music (Loop Mode).</li>
+                        <li><strong>Upgrade:</strong> Neural Net & Void Gate Loading Sequences.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gray-900 p-3 border border-gray-700 text-xs text-center">
+                    "This entire infrastructure was conceptualized and built by <span class="text-white font-bold">Maze</span>. Unauthorized replication will result in immediate IP blacklisting."
+                </div>
+            </div>
+
+            <button onmouseover="app.scrambleText(this, 'INITIALIZE SYSTEM')" onclick="app.closeIntro()" class="w-full cyber-btn py-4 mt-8 text-sm tracking-[0.2em] animate-pulse">
+                INITIALIZE SYSTEM
+            </button>
         </div>
     </div>
 
@@ -228,9 +211,9 @@
                 <i class="fas fa-ghost"></i> S<span class="text-gray-600">PANEL</span>
             </div>
             <div class="flex flex-wrap items-center justify-center gap-4 font-mono text-xs md:text-sm">
-                <button onclick="app.openNavModal('modules')" class="hover:text-white text-gray-400 hover:bg-white/10 px-2 py-1 transition-all">[ MODULES ]</button>
-                <button onclick="app.openNavModal('docs')" class="hover:text-white text-gray-400 hover:bg-white/10 px-2 py-1 transition-all">[ MANUALS ]</button>
-                <button onclick="app.openNavModal('security')" class="hover:text-white text-gray-400 hover:bg-white/10 px-2 py-1 transition-all">[ THREATS ]</button>
+                <button onmouseover="app.scrambleText(this, '[ MODULES ]')" onclick="app.openNavModal('modules')" class="hover:text-white text-gray-400 hover:bg-white/10 px-2 py-1 transition-all">[ MODULES ]</button>
+                <button onmouseover="app.scrambleText(this, '[ MANUALS ]')" onclick="app.openNavModal('docs')" class="hover:text-white text-gray-400 hover:bg-white/10 px-2 py-1 transition-all">[ MANUALS ]</button>
+                <button onmouseover="app.scrambleText(this, '[ THREATS ]')" onclick="app.openNavModal('security')" class="hover:text-white text-gray-400 hover:bg-white/10 px-2 py-1 transition-all">[ THREATS ]</button>
                 <button onclick="app.toggleVhs()" class="cyber-btn border px-3 py-1 text-[10px] ml-2 tracking-widest">
                     VHS: <span id="vhs-status">ON</span>
                 </button>
@@ -253,13 +236,13 @@
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-3xl">
-                <button onclick="app.triggerInstaller()" class="cyber-btn py-4 flex items-center justify-center gap-2 group hover:scale-[1.02] transition-transform">
+                <button onmouseover="app.scrambleText(this, 'GET FILE')" onclick="app.triggerInstaller()" class="cyber-btn py-4 flex items-center justify-center gap-2 group hover:scale-[1.02] transition-transform">
                     <i class="fas fa-bolt group-hover:animate-pulse"></i> GET FILE
                 </button>
-                <button onclick="app.openDiscord()" class="cyber-btn bg-black text-white hover:bg-white hover:text-black py-4 flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
+                <button onmouseover="app.scrambleText(this, 'DISCORD')" onclick="app.openDiscord()" class="cyber-btn bg-black text-white hover:bg-white hover:text-black py-4 flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
                     <i class="fab fa-discord"></i> DISCORD
                 </button>
-                <button onclick="app.openLuaObfuscator()" class="cyber-btn bg-black border-gray-500 text-gray-400 hover:border-white hover:text-white py-4 flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
+                <button onmouseover="app.scrambleText(this, 'LUA OBFUSCATOR')" onclick="app.openLuaObfuscator()" class="cyber-btn bg-black border-gray-500 text-gray-400 hover:border-white hover:text-white py-4 flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform">
                     <i class="fas fa-code"></i> LUA OBFUSCATOR
                 </button>
             </div>
@@ -303,17 +286,51 @@
             SPANEL © 2025 | MAZIKEEN HELPER: DISABILITYBG
         </footer>
 
-        <!-- WIDGETS -->
-        <div class="fixed bottom-4 left-4 z-50 bg-black border border-white p-2 font-mono text-[10px] hidden md:block shadow-[2px_2px_0px_#333]">
+        <!-- LEFT WIDGET: STATS -->
+        <div class="fixed bottom-4 left-4 z-50 bg-black border border-white p-2 font-mono text-[10px] hidden md:block shadow-[2px_2px_0px_#333] w-48">
             <div class="flex items-center gap-2 border-b border-gray-800 pb-1 mb-1">
                 <span class="w-1.5 h-1.5 bg-white animate-pulse"></span>
                 <span>NET_LIVE: <span id="live-visits" class="font-bold text-white">42</span></span>
             </div>
-            <div class="text-gray-500">TOTAL: <span id="total-visits">14,205</span></div>
+            <div class="text-gray-500 mb-2">TOTAL: <span id="total-visits">14,205</span></div>
+            <div id="activity-log" class="h-16 overflow-hidden text-[9px] text-gray-600 border-t border-dashed border-gray-800 pt-1 leading-tight"></div>
         </div>
 
-        <div onclick="app.toggleMute()" class="fixed bottom-4 right-4 z-50 w-8 h-8 bg-black border border-white flex items-center justify-center cursor-pointer hover:bg-white hover:text-black transition shadow-[2px_2px_0px_#333]">
-            <i id="volume-icon" class="fas fa-volume-up text-xs"></i>
+        <!-- RIGHT WIDGET: MUSIC PLAYER (NEW FEATURE) -->
+        <div class="fixed bottom-4 right-4 z-50 w-64 bg-black border border-white p-0 shadow-[4px_4px_0px_#333] font-mono text-xs hidden md:block">
+            <!-- Player Header -->
+            <div class="bg-white text-black px-2 py-1 flex justify-between items-center border-b border-black">
+                <span class="font-bold tracking-widest"><i class="fas fa-compact-disc spin-slow mr-1"></i> CYBER-DECK</span>
+                <span id="track-time">LOOP MODE</span>
+            </div>
+            <!-- Visualizer Area -->
+            <div class="h-12 border-b border-white bg-[#050505] relative flex items-end justify-center gap-1 p-1 overflow-hidden">
+                <div class="visualizer-bar" style="animation-duration: 0.4s"></div>
+                <div class="visualizer-bar" style="animation-duration: 0.2s"></div>
+                <div class="visualizer-bar" style="animation-duration: 0.6s"></div>
+                <div class="visualizer-bar" style="animation-duration: 0.3s"></div>
+                <div class="visualizer-bar" style="animation-duration: 0.5s"></div>
+                <div class="visualizer-bar" style="animation-duration: 0.2s"></div>
+                <div class="visualizer-bar" style="animation-duration: 0.4s"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            </div>
+            <!-- Controls -->
+            <div class="p-3">
+                <div class="mb-2 whitespace-nowrap overflow-hidden relative h-4">
+                    <div id="track-name" class="absolute whitespace-nowrap animate-[marquee_10s_linear_infinite]">NO DISC INSERTED</div>
+                </div>
+                <div class="flex justify-between items-center text-lg">
+                    <button onclick="app.music.replay()" class="hover:text-gray-400 active:scale-90 transition"><i class="fas fa-step-backward"></i></button>
+                    <button onclick="app.music.toggle()" class="hover:text-white text-white active:scale-90 transition w-8 h-8 border border-white flex items-center justify-center rounded-full">
+                        <i id="play-icon" class="fas fa-play text-xs ml-0.5"></i>
+                    </button>
+                    <button onclick="app.music.replay()" class="hover:text-gray-400 active:scale-90 transition"><i class="fas fa-step-forward"></i></button>
+                </div>
+                <div class="mt-2 flex gap-1 items-center">
+                     <i class="fas fa-volume-down text-[8px] text-gray-500"></i>
+                     <input type="range" min="0" max="1" step="0.1" value="0.3" oninput="app.music.volume(this.value)" class="w-full h-1 bg-gray-800 appearance-none cursor-pointer">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -382,6 +399,12 @@
     <!-- HIDDEN INPUT -->
     <input type="file" id="fileInput" hidden accept=".lua,.txt">
 
+    <style>
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .spin-slow { animation: spin 3s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+
     <script>
         const app = {
             state: {
@@ -395,16 +418,109 @@
             DISCORD_URL: "https://discord.gg/MpcyR24e",
             CREATOR_DISCORD_ID: "123456789012345678",
 
+            // --- MUSIC PLAYER ---
+            music: {
+                tracks: [
+                    { name: "EYEDRESS - JEALOUS (SLOWED REVERB)", url: "https://cs1.mp3.pm/download/189207047/SUREeEUzWFd2YzlzNEQrOFhoTzc1MnFCRmpxbFF0SnRNd2pGcTd4RjJKNm1YTGtsbGkzRUQ3TC91VlpDeTJ2NXJuczZEenVRdU5NUEFtejNTM0UwOStoS1FyeTRUOW5JQ0pOK1FnazJOeFA4S1M3VWJHTmp5YVEvbERpeVBhYTE/eyedress_-_jealous_slowed_reverb_(mp3.pm).mp3" }
+                ],
+                currentIdx: 0,
+                isPlaying: false,
+                audioEl: null,
+                
+                init: function() {
+                    this.audioEl = document.getElementById('audio-player');
+                    this.audioEl.volume = 0.3;
+                    this.audioEl.loop = true; // Loop enabled by default for single track
+                    this.updateUI();
+                },
+                toggle: function() {
+                    if(this.isPlaying) this.audioEl.pause();
+                    else {
+                        if(!this.audioEl.src) this.loadTrack(0);
+                        this.audioEl.play().catch(e=>console.log(e));
+                    }
+                    this.isPlaying = !this.isPlaying;
+                    this.updateUI();
+                },
+                replay: function() {
+                    this.audioEl.currentTime = 0;
+                    if(!this.isPlaying) {
+                        this.audioEl.play();
+                        this.isPlaying = true;
+                    }
+                    this.updateUI();
+                },
+                loadTrack: function(idx) {
+                    this.currentIdx = idx;
+                    this.audioEl.src = this.tracks[idx].url;
+                    this.isPlaying = true;
+                    this.audioEl.play();
+                    this.updateUI();
+                },
+                volume: function(val) {
+                    this.audioEl.volume = val;
+                },
+                updateUI: function() {
+                    const icon = document.getElementById('play-icon');
+                    icon.className = this.isPlaying ? "fas fa-pause text-xs" : "fas fa-play text-xs ml-0.5";
+                    document.getElementById('track-name').innerText = (this.isPlaying ? "PLAYING: " : "PAUSED: ") + this.tracks[this.currentIdx].name;
+                }
+            },
+
             // --- INIT ---
             init: function() {
                 this.initVisits();
                 this.initCanvas();
                 this.setupAudio();
+                this.initActivityLog();
+                this.music.init();
                 
                 document.getElementById('fileInput').addEventListener('change', (e) => this.handleFileSelect(e));
             },
 
-            // --- AUDIO ---
+            // --- SCRAMBLE TEXT EFFECT ---
+            scrambleText: function(el, originalText) {
+                if(el.dataset.scrambling === "true") return;
+                el.dataset.scrambling = "true";
+                const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+                let iterations = 0;
+                
+                const interval = setInterval(() => {
+                    el.innerText = originalText.split("").map((letter, index) => {
+                        if(index < iterations) {
+                             if(el.querySelectorAll('i').length > 0) return letter; 
+                             return originalText[index]; 
+                        }
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    }).join("");
+                    
+                    if(iterations >= originalText.length) { 
+                        clearInterval(interval);
+                        el.innerText = originalText;
+                        el.dataset.scrambling = "false";
+                        if(originalText.includes('GET FILE')) el.innerHTML = '<i class="fas fa-bolt group-hover:animate-pulse"></i> GET FILE';
+                        if(originalText.includes('DISCORD')) el.innerHTML = '<i class="fab fa-discord"></i> DISCORD';
+                        if(originalText.includes('LUA')) el.innerHTML = '<i class="fas fa-code"></i> LUA OBFUSCATOR';
+                    }
+                    iterations += 1/2; 
+                }, 30);
+            },
+
+            // --- ACTIVITY LOG ---
+            initActivityLog: function() {
+                const logs = ["Proxy node rerouted [82.11]", "Firewall ping detected", "Auth token refreshed", "Packet loss: 0.01%", "Sentinel: Idle", "User_442 connected", "Cache flushed"];
+                const el = document.getElementById('activity-log');
+                
+                setInterval(() => {
+                    const log = logs[Math.floor(Math.random() * logs.length)];
+                    const div = document.createElement('div');
+                    div.innerText = "> " + log;
+                    el.prepend(div);
+                    if(el.children.length > 4) el.lastElementChild.remove();
+                }, 2000);
+            },
+
+            // --- AUDIO SYSTEM SOUNDS ---
             audioCtx: null,
             setupAudio: function() {
                 try {
@@ -429,14 +545,6 @@
                 osc.start();
                 osc.stop(this.audioCtx.currentTime + 0.1);
             },
-            toggleMute: function() {
-                this.state.muted = !this.state.muted;
-                const audio = document.getElementById('bgMusic');
-                audio.muted = this.state.muted;
-                const icon = document.getElementById('volume-icon');
-                icon.className = this.state.muted ? 'fas fa-volume-mute text-xs' : 'fas fa-volume-up text-xs';
-                this.playUiSound();
-            },
 
             // --- THEME ---
             toggleVhs: function() {
@@ -446,18 +554,21 @@
                 this.playUiSound();
             },
 
-            // --- NAVIGATION / LOADING ---
+            // --- NAVIGATION / LOADING (IMPROVED) ---
             enterSystem: async function() {
                 this.playUiSound();
-                await this.startLoading('glitch', 'BREACHING FIREWALL...', 1500);
+                await this.startLoading('void', 'ENTERING GATEWAY...', 2500);
                 
                 document.getElementById('welcome-screen').classList.add('hidden');
+                document.getElementById('intro-modal').classList.remove('hidden');
+            },
+            
+            closeIntro: function() {
+                this.playUiSound();
+                document.getElementById('intro-modal').classList.add('hidden');
                 document.getElementById('main-content').classList.remove('hidden');
                 document.getElementById('main-content').classList.add('animate-crt-open');
-
-                const audio = document.getElementById('bgMusic');
-                audio.volume = 0.4;
-                audio.play().catch(e => console.log('Audio blocked', e));
+                this.music.toggle(); // Auto-start music on dashboard entry
             },
 
             startLoading: function(type, msg, duration = 1500) {
@@ -465,63 +576,98 @@
                     const overlay = document.getElementById('loader-overlay');
                     const content = document.getElementById('loader-content');
                     overlay.classList.remove('hidden');
+                    content.innerHTML = ''; // Clear previous
+
+                    // DYNAMIC LOADERS LOGIC
+                    let interval;
                     
-                    let html = '';
-                    // Generate HTML based on monochrome design
-                    if(type === 'vcr') {
-                        html = `
-                            <div class="vcr-screen">
-                                <div class="vcr-tracking"></div>
-                                <div class="absolute top-8 left-8 text-xl font-mono">AV-1</div>
-                                <div class="vcr-play font-cyber">PLAY ►</div>
-                                <div class="absolute bottom-8 right-8 text-xl font-mono">SP 0:00:01</div>
-                                <div class="mt-8 text-sm opacity-70 animate-pulse font-mono">${msg}</div>
+                    if(type === 'void') {
+                        // 3D TUNNEL
+                        content.innerHTML = `
+                            <div class="void-gate">
+                                <div class="void-tunnel"></div>
+                                <div class="z-10 bg-black border-y-2 border-white p-4 text-2xl font-cyber tracking-[0.5em] animate-pulse">${msg}</div>
                             </div>`;
-                    } else if (type === 'bio') {
-                        html = `
-                            <div class="bio-scan-container">
-                                <div class="bio-grid"></div>
-                                <div class="bio-beam"></div>
-                                <div class="bio-text">
-                                    <div class="text-4xl mb-2"><i class="fas fa-biohazard fa-spin"></i></div>
-                                    <div class="text-xl tracking-widest font-cyber">SECURITY SCAN</div>
-                                    <div class="text-xs mt-2 font-mono uppercase">${msg}</div>
-                                </div>
-                            </div>`;
-                    } else if (type === 'signal') {
-                        html = `
-                             <div class="signal-container">
-                                <div class="signal-wave"></div>
-                                <div class="signal-wave" style="animation-delay: 0.5s"></div>
-                                <div class="signal-text border-2 border-white">
-                                    <i class="fas fa-satellite-dish mr-2"></i> SIGNAL FOUND
-                                </div>
-                                <div class="mt-4 font-mono text-xs text-black bg-white px-2 py-1 font-bold">${msg}</div>
-                            </div>`;
-                    } else if (type === 'data') {
-                        let cols = '';
-                        for(let i=0; i<10; i++) cols += `<div class="data-column" style="left:${i*10}%; animation-duration:${0.3 + i*0.1}s">101010101010</div>`;
-                        html = `
-                            <div class="data-melt-container">
-                                ${cols}
-                                <div class="bg-black text-white p-6 border border-white z-10 text-center">
-                                    <div class="text-2xl font-bold mb-1 font-cyber">COMPILING...</div>
-                                    <div class="text-[10px] font-mono text-gray-400">${msg}</div>
-                                </div>
-                            </div>`;
+                    } else if (type === 'neural') {
+                        // CANVAS NETWORK
+                        const canvas = document.createElement('canvas');
+                        canvas.width = window.innerWidth;
+                        canvas.height = window.innerHeight;
+                        content.appendChild(canvas);
+                        const ctx = canvas.getContext('2d');
+                        const nodes = Array.from({length: 50}, () => ({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*4, vy: (Math.random()-0.5)*4}));
+                        
+                        const drawNeural = () => {
+                            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                            ctx.fillRect(0,0,canvas.width, canvas.height);
+                            ctx.strokeStyle = 'white';
+                            ctx.lineWidth = 1;
+                            
+                            nodes.forEach(n => {
+                                n.x += n.vx; n.y += n.vy;
+                                if(n.x < 0 || n.x > canvas.width) n.vx *= -1;
+                                if(n.y < 0 || n.y > canvas.height) n.vy *= -1;
+                                
+                                nodes.forEach(n2 => {
+                                    const d = Math.hypot(n.x-n2.x, n.y-n2.y);
+                                    if(d < 100) {
+                                        ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(n2.x, n2.y); ctx.stroke();
+                                    }
+                                });
+                            });
+                            
+                            ctx.font = "20px Share Tech Mono";
+                            ctx.fillStyle = "white";
+                            ctx.fillText(msg, canvas.width/2 - 100, canvas.height/2);
+                        };
+                        interval = setInterval(drawNeural, 30);
+                        
+                    } else if (type === 'rain') {
+                        // MATRIX RAIN (MONOCHROME)
+                        const canvas = document.createElement('canvas');
+                        canvas.width = window.innerWidth;
+                        canvas.height = window.innerHeight;
+                        content.appendChild(canvas);
+                        const ctx = canvas.getContext('2d');
+                        const columns = Math.floor(canvas.width / 20);
+                        const drops = Array(columns).fill(1);
+                        
+                        const drawRain = () => {
+                            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+                            ctx.fillRect(0,0,canvas.width, canvas.height);
+                            ctx.fillStyle = '#fff';
+                            ctx.font = '15px monospace';
+                            
+                            for(let i=0; i<drops.length; i++) {
+                                const text = String.fromCharCode(Math.floor(Math.random() * 96) + 33); // Random ASCII
+                                ctx.fillText(text, i*20, drops[i]*20);
+                                if(drops[i]*20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                                drops[i]++;
+                            }
+                            // Overlay Text
+                            ctx.fillStyle = "black";
+                            ctx.fillRect(canvas.width/2 - 150, canvas.height/2 - 30, 300, 60);
+                            ctx.strokeStyle = "white";
+                            ctx.strokeRect(canvas.width/2 - 150, canvas.height/2 - 30, 300, 60);
+                            ctx.fillStyle = "white";
+                            ctx.font = "bold 20px Orbitron";
+                            ctx.fillText(msg, canvas.width/2 - 120, canvas.height/2 + 10);
+                        };
+                        interval = setInterval(drawRain, 50);
+
                     } else {
-                        // Glitch
-                         html = `
+                        // Fallback Glitch
+                         content.innerHTML = `
                             <div class="flex flex-col items-center justify-center h-full relative">
                                 <h1 class="text-6xl text-white font-black font-cyber animate-pulse">${msg}</h1>
                                 <div class="mt-4 text-center font-mono text-white font-bold tracking-widest text-sm animate-pulse border border-white px-2">ACCESS GRANTED</div>
                             </div>`;
                     }
 
-                    content.innerHTML = html;
                     this.playUiSound();
 
                     setTimeout(() => {
+                        if(interval) clearInterval(interval);
                         overlay.classList.add('hidden');
                         content.innerHTML = '';
                         resolve();
@@ -529,14 +675,14 @@
                 });
             },
 
-            // --- MODALS ---
+            // --- MODALS & TOOLS ---
             closeModal: function() {
                 this.playUiSound();
                 document.getElementById('modal-container').classList.add('hidden');
             },
 
             openNavModal: async function(key) {
-                await this.startLoading('glitch', 'FETCHING DATA...', 800);
+                await this.startLoading('rain', 'DECRYPTING DATA...', 1200);
                 const data = {
                     modules: { title: "CORE MODULES", id: "0xMOD-LIST", desc: "Active kernel modules", icon: "fa-cubes", content: [{name: "CORE_KERNEL", tag: "RUNNING"}, {name: "LUA_BRIDGE", tag: "ACTIVE"}] },
                     docs: { title: "MANUALS", id: "0xDOC-V2", desc: "Technical reference", icon: "fa-book", content: [{name: "API Reference v2.5", tag: "PDF"}] },
@@ -557,7 +703,7 @@
             },
 
             openKeyboardModal: async function() {
-                await this.startLoading('bio', 'INITIALIZING DRIVER...', 1500);
+                await this.startLoading('neural', 'INITIALIZING DRIVER...', 1500);
                 this.state.keyboardBuffer = '';
                 
                 const rows = ["1234567890", "QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
@@ -592,7 +738,7 @@
             copyKeyboard: function() { navigator.clipboard.writeText(this.state.keyboardBuffer); this.playUiSound(); },
 
             openLuaObfuscator: async function() {
-                await this.startLoading('data', 'LOADING ENCRYPTION...', 1500);
+                await this.startLoading('rain', 'LOADING ENCRYPTION...', 1500);
                 const html = `
                     <div class="relative">
                         <textarea id="lua-input" placeholder="-- Paste Lua Code Here" class="w-full h-32 bg-gray-900/50 border border-gray-700 text-gray-300 p-3 text-xs outline-none focus:border-white transition-colors font-mono"></textarea>
@@ -620,7 +766,7 @@
             handleFileSelect: async function(e) {
                 const file = e.target.files[0];
                 if(!file) return;
-                await this.startLoading('bio', 'ANALYZING STRUCTURE...', 2000);
+                await this.startLoading('neural', 'ANALYZING STRUCTURE...', 2000);
                 const reader = new FileReader();
                 reader.onload = (ev) => {
                     const content = ev.target.result;
@@ -639,7 +785,7 @@
             },
 
             openYTPlayer: async function() {
-                await this.startLoading('vcr', 'INSERTING TAPE...', 2000);
+                await this.startLoading('void', 'INSERTING TAPE...', 2000);
                 const html = `
                     <div class="space-y-4">
                         <div class="flex gap-2">
@@ -676,13 +822,13 @@
             },
 
             // --- LINKS ---
-            openDiscord: async function() { await this.startLoading('signal', 'UPLINK ESTABLISHED', 1500); window.open(this.DISCORD_URL); },
-            openCreatorDiscord: async function() { await this.startLoading('signal', 'LOCATING ID...', 1500); window.open(`https://discord.com/users/${this.CREATOR_DISCORD_ID}`); },
+            openDiscord: async function() { await this.startLoading('void', 'UPLINK ESTABLISHED', 1500); window.open(this.DISCORD_URL); },
+            openCreatorDiscord: async function() { await this.startLoading('void', 'LOCATING ID...', 1500); window.open(`https://discord.com/users/${this.CREATOR_DISCORD_ID}`); },
 
             // --- INSTALLER ---
             triggerInstaller: async function() {
                 this.playUiSound();
-                await this.startLoading('bio', 'ROOT ACCESS...', 2000);
+                await this.startLoading('neural', 'ROOT ACCESS...', 2000);
                 document.getElementById('main-content').classList.add('hidden');
                 document.getElementById('installer-overlay').classList.remove('hidden');
                 this.runTerminal();
